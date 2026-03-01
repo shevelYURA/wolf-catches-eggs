@@ -48,19 +48,17 @@ int main()
     bool GameOver = false;
     Clock clock;
     float time, timeEggs;
-
-    //
     
 
     while (window.isOpen())
     {
+        time = clock.getElapsedTime().asMicroseconds();
+        timeEggs = time / 3000;
+        time = time / 6000;
+        clock.restart();
+
         while (const std::optional event = window.pollEvent())
         {
-            time = clock.getElapsedTime().asMicroseconds();
-            timeEggs = time / 3000;
-            time = time / 6000;
-            clock.restart();
-
             if (event->is <Event::Closed>())
                 window.close();
 

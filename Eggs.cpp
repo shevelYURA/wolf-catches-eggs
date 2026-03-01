@@ -2,7 +2,7 @@
 
 Eggs::Eggs() : WorldObject(texEggs)
 {
-	if (!texEggs.loadFromFile("image/eggsTexture.jpg")) {
+	if (!texEggs.loadFromFile("image/eggsTexture.png")) {
 		throw;
 	}
 	WorldObject.setTexture(texEggs);
