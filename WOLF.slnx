@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="WOLF.vcxproj" Id="9efd1c2e-dba0-4ba6-8d07-f2ae152dee16" />
+</Solution>
