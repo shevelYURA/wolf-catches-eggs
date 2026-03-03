@@ -18,7 +18,7 @@ int main()
 
     //------------------------------------------------------------------------------------------//
     
-    //Объекты
+    //Объекты:
     
     //Волк
     Texture texWolf;
@@ -36,7 +36,8 @@ int main()
     }
     RectangleShape Basket(Vector2f(150, 50));
     Basket.setTexture(&texBasket);
-    Basket.setPosition(Vector2f(565, 400));
+    //Basket.setPosition(Vector2f(565, 400));
+    Basket.setPosition(Vector2f(WOLF.getPosition().x - 25, 500));
 
     //Яйца
     Eggs eggs[3];
@@ -79,8 +80,17 @@ int main()
                     Basket.setPosition(Vector2f(Basket.getPosition().x, 400));
                 }
             }
-            for (int i = 0; i < count_eggs; i++) eggs[i].move(timeEggs);
         }
+
+        for (int i = 0; i < count_eggs; i++)
+        {
+            eggs[i].move(timeEggs);
+
+            if (eggs[i].collision(Basket.getGlobalBounds())) {
+                eggs[i].restart();
+            }
+        }
+
         window.clear();
         window.draw(WOLF);
         window.draw(Basket);
