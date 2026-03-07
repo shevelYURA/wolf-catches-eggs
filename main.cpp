@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "Eggs.h"
 #include "Player.h"
+#include "Scorer.h"
 #include <ctime>
 #include <cstdlib>
 
@@ -25,6 +26,7 @@ int main()
     Player player;
     Eggs eggs[7];
     const int count_eggs = 7;
+    Scorer scoreCounter;
 
     //----------------------------------------------------------------------------------//
 
@@ -52,12 +54,14 @@ int main()
             eggs[i].move(time);
             if (eggs[i].collision(player.getBasketBounds())) {
                 eggs[i].restart();
+                scoreCounter.addScore(500);
             }
         }
 
         window.clear();
         player.draw(window);
         for (int i = 0; i < count_eggs; i++) eggs[i].draw(window);
+        scoreCounter.draw(window);
         window.display();
     }
 }

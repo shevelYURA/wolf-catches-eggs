@@ -138,10 +138,12 @@
     <ClCompile Include="Eggs.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Scorer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Eggs.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Scorer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
