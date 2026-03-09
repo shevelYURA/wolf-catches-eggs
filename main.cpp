@@ -1,7 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include "Eggs.h"
+#include "Bombs.h"
 #include "Player.h"
 #include "Scorer.h"
+#include "HealthBar.h"
 #include <ctime>
 #include <cstdlib>
 
@@ -25,8 +27,11 @@ int main()
 
     Player player;
     Eggs eggs[7];
+    Bombs bombs[3];
     const int count_eggs = 7;
+    const int count_bombs = 3;
     Scorer scoreCounter;
+    HealthBar healthBar;
 
     //----------------------------------------------------------------------------------//
 
@@ -47,7 +52,9 @@ int main()
                 window.close();
         }
 
-        player.update(time);
+        if (player.isAlive()) {
+            player.update(time);
+        }
 
         for (int i = 0; i < count_eggs; i++)
         {
@@ -58,10 +65,58 @@ int main()
             }
         }
 
+        for (int i = 0; i < count_bombs; i++)
+        {
+            bombs[i].move(time);
+            if (player.isAlive() && bombs[i].collision(player.getBasketBounds())) {
+                bombs[i].restart();
+                player.takeDamage(20);
+            }
+        }
+
+        healthBar.update(player.getHealth());
+
         window.clear();
         player.draw(window);
         for (int i = 0; i < count_eggs; i++) eggs[i].draw(window);
+        for (int i = 0; i < count_bombs; i++) bombs[i].draw(window);
         scoreCounter.draw(window);
+        healthBar.draw(window);
+
+        if (!player.isAlive()) {
+            // Создаем временный текст для сообщения о смерти
+            Font font;
+            if (font.openFromFile("image/ARCADECLASSIC.ttf")) {
+                Text gameOverText(font);
+                gameOverText.setString("GAME OVER! Press R to restart");
+                gameOverText.setCharacterSize(72);
+                gameOverText.setFillColor(Color::Red);
+                gameOverText.setOutlineColor(Color::Black);
+                gameOverText.setOutlineThickness(3);
+
+                // Центрируем текст
+                FloatRect textBounds = gameOverText.getLocalBounds();
+                gameOverText.setOrigin(Vector2f(textBounds.size.x / 2, textBounds.size.y / 2));
+                gameOverText.setPosition(Vector2f(960, 540));
+
+                window.draw(gameOverText);
+
+                // Проверка нажатия R для рестарта
+                if (Keyboard::isKeyPressed(Keyboard::Key::R)) {
+                    player.reset();
+                    scoreCounter.reset();
+
+                    // Перезапускаем все яйца и бомбы
+                    for (int i = 0; i < count_eggs; i++) {
+                        eggs[i].restart();
+                    }
+                    for (int i = 0; i < count_bombs; i++) {
+                        bombs[i].restart();
+                    }
+                }
+            }
+        }
+
         window.display();
     }
 }

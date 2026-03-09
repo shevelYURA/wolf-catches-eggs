@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player()
+Player::Player() : health(100)
 {
     if (!texWolf.loadFromFile("image/wolfTexture.png")) {
         throw;
@@ -51,4 +51,40 @@ void Player::draw(RenderWindow& window)
 FloatRect Player::getBasketBounds() const
 {
     return basket.getGlobalBounds();
+}
+
+int Player::getHealth() const
+{
+    return health;
+}
+
+void Player::takeDamage(int damage)
+{
+    health -= damage;
+    if (health < 0) health = 0;
+    checkHealth();
+}
+
+bool Player::isAlive() const
+{
+    return health > 0;
+}
+
+void Player::reset()
+{
+    health = 100;
+    wolf.setFillColor(Color::White);
+}
+
+void Player::checkHealth()
+{
+    if (health <= 0) {
+        wolf.setFillColor(Color(255, 0, 0, 128));
+    }
+    else if (health < 30) {
+        wolf.setFillColor(Color(255, 100, 100));
+    }
+    else {
+        wolf.setFillColor(Color::White);
+    }
 }

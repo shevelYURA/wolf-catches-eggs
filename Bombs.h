@@ -2,28 +2,28 @@
 #include <SFML/Graphics.hpp>
 using namespace sf;
 
-class Eggs
+class Bombs
 {
 public:
-    Eggs();
-    ~Eggs();
+    Bombs();
+    ~Bombs();
 
     void move(float time);
     void draw(RenderWindow& window);
     bool collision(FloatRect object);
     void restart();
-    FloatRect Get_Eggs_Bound();
+    FloatRect Get_Bombs_Bound();
 
 private:
-    RectangleShape egg;
-    Texture texEggs;
+    RectangleShape bomb;
+    Texture texBombs;
 
-    enum EggState {
+    enum BombState {
         falling,
         waiting
     };
 
-    EggState currentState;
+    BombState currentState;
     float speed;
     float waitTimer;
     float waitTime;

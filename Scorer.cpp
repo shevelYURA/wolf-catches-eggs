@@ -4,14 +4,14 @@ Scorer::Scorer() : score(0), scoreText(nullptr)
 {
 	if (!font.openFromFile("image/ARCADECLASSIC.ttf")) {}
 
-    scoreText = new sf::Text(font);
+    scoreText = new Text(font);
 
     scoreText->setString("Score     0");
     scoreText->setCharacterSize(36);
-    scoreText->setFillColor(sf::Color::White);
-    scoreText->setOutlineColor(sf::Color::Black);
+    scoreText->setFillColor(Color::White);
+    scoreText->setOutlineColor(Color::Black);
     scoreText->setOutlineThickness(2);
-    scoreText->setPosition(sf::Vector2f(20, 20));
+    scoreText->setPosition(Vector2f(20, 20));
 }
 
 Scorer::~Scorer()
@@ -31,7 +31,7 @@ void Scorer::reset()
     updateText();
 }
 
-void Scorer::draw(sf::RenderWindow& window)
+void Scorer::draw(RenderWindow& window)
 {
     if (scoreText) {
         window.draw(*scoreText);

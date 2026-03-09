@@ -1,12 +1,13 @@
 #include "Eggs.h"
 
-Eggs::Eggs() : WorldObject(texEggs)
+Eggs::Eggs()
 {
 	if (!texEggs.loadFromFile("image/eggsTexture.png")) {
 		throw;
 	}
-	WorldObject.setTexture(texEggs);
-	WorldObject.setTextureRect(IntRect({ 262, 325 }, { 40, 35 }));
+
+	egg.setSize(Vector2f(40, 35));
+	egg.setTexture(&texEggs);
 
 	restart();
 
@@ -26,16 +27,16 @@ void Eggs::move(float time)
 		if (waitTimer >= waitTime) {
 			currentState = falling;
 			float x = static_cast<float>(rand() % 1820 + 50);
-			WorldObject.setPosition(Vector2f{ x, 0.0f });
+			egg.setPosition(Vector2f{ x, 0.0f });
 		}
 		break;
 
 	case falling:
-		WorldObject.move({ 0.0f, speed * time * 1.5f });
+		egg.move({ 0.0f, speed * time * 1.5f });
 		break;
 	}
 	//выход за пределы(Потенциальное разбитие об пол)
-	if (WorldObject.getPosition().y > 1080) {
+	if (egg.getPosition().y > 1080) {
 		restart();
 	}
 }
@@ -43,14 +44,14 @@ void Eggs::move(float time)
 void Eggs::draw(RenderWindow& window)
 {
 	if (currentState == falling) {
-		window.draw(WorldObject);
+		window.draw(egg);
 	}
 }
 
 bool Eggs::collision(FloatRect object)
 {
 	if (currentState == falling) {
-		return WorldObject.getGlobalBounds().findIntersection(object).has_value();
+		return egg.getGlobalBounds().findIntersection(object).has_value();
 	}
 	return false;
 }
@@ -60,10 +61,10 @@ void Eggs::restart()
 	waitTime = (rand() % 5) + 1;
 	waitTimer = 0;
 	currentState = waiting;
-	WorldObject.setPosition(Vector2f{ -100, -100 });
+	egg.setPosition(Vector2f{ -100, -100 });
 }
 
 FloatRect Eggs::Get_Eggs_Bound()
 {
-	return WorldObject.getGlobalBounds();
+	return egg.getGlobalBounds();
 }
