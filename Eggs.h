@@ -1,30 +1,7 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-using namespace sf;
+#include "FallingObject.h"
 
-class Eggs
-{
+class Egg : public FallingObject {
 public:
-    Eggs();
-    ~Eggs();
-
-    void move(float time);
-    void draw(RenderWindow& window);
-    bool collision(FloatRect object);
-    void restart();
-    FloatRect Get_Eggs_Bound();
-
-private:
-    RectangleShape egg;
-    Texture texEggs;
-
-    enum EggState {
-        falling,
-        waiting
-    };
-
-    EggState currentState;
-    float speed;
-    float waitTimer;
-    float waitTime;
+    Egg() : FallingObject("image/eggsTexture.png", Vector2f(40, 35)) {}
 };

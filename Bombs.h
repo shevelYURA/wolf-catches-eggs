@@ -1,30 +1,7 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-using namespace sf;
+#include "FallingObject.h"
 
-class Bombs
-{
+class Bomb : public FallingObject {
 public:
-    Bombs();
-    ~Bombs();
-
-    void move(float time);
-    void draw(RenderWindow& window);
-    bool collision(FloatRect object);
-    void restart();
-    FloatRect Get_Bombs_Bound();
-
-private:
-    RectangleShape bomb;
-    Texture texBombs;
-
-    enum BombState {
-        falling,
-        waiting
-    };
-
-    BombState currentState;
-    float speed;
-    float waitTimer;
-    float waitTime;
+    Bomb() : FallingObject("image/bombTexture.png", Vector2f(40, 35)) {}
 };

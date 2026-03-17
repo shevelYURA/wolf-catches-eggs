@@ -6,6 +6,8 @@
 #include "HealthBar.h"
 #include <ctime>
 #include <cstdlib>
+#include <vector>
+#include <memory>
 
 using namespace sf;
 
@@ -26,26 +28,29 @@ int main()
     //----------------------------------------------------------------------------------//
 
     Player player;
-    Eggs eggs[7];
-    Bombs bombs[3];
+    std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
+    for (int i = 0; i < count_eggs; ++i) {
+        fallingObjects.push_back(std::make_unique<Egg>());
+    }
     const int count_bombs = 3;
+    for (int i = 0; i < count_bombs; ++i) {
+        fallingObjects.push_back(std::make_unique<Bomb>());
+    }
     Scorer scoreCounter;
     HealthBar healthBar;
 
     //----------------------------------------------------------------------------------//
 
     Clock clock;
-    float time;
 
     //----------------------------------------------------------------------------------//
 
     while (window.isOpen())
     {
-        time = clock.getElapsedTime().asMicroseconds();
-        time = time / 600000;
+        float time = clock.getElapsedTime().asMicroseconds() / 600000.0f;
         clock.restart();
-
+            
         while (const std::optional event = window.pollEvent())
         {
             if (event->is <Event::Closed>())
@@ -56,21 +61,22 @@ int main()
             player.update(time);
         }
 
-        for (int i = 0; i < count_eggs; i++)
-        {
-            eggs[i].move(time);
-            if (eggs[i].collision(player.getBasketBounds())) {
-                eggs[i].restart();
-                scoreCounter.addScore(500);
-            }
-        }
+        for (auto& obj : fallingObjects) {
+            obj->move(time);
 
-        for (int i = 0; i < count_bombs; i++)
-        {
-            bombs[i].move(time);
-            if (player.isAlive() && bombs[i].collision(player.getBasketBounds())) {
-                bombs[i].restart();
-                player.takeDamage(20);
+            // Проверяем коллизию с игроком
+            if (obj->collision(player.getBasketBounds())) {
+                // Определяем тип объекта через dynamic_cast
+                if (dynamic_cast<Egg*>(obj.get())) {
+                    obj->restart();
+                    scoreCounter.addScore(500);
+                }
+                else if (dynamic_cast<Bomb*>(obj.get())) {
+                    if (player.isAlive()) {
+                        obj->restart();
+                        player.takeDamage(20);
+                    }
+                }
             }
         }
 
@@ -78,8 +84,9 @@ int main()
 
         window.clear();
         player.draw(window);
-        for (int i = 0; i < count_eggs; i++) eggs[i].draw(window);
-        for (int i = 0; i < count_bombs; i++) bombs[i].draw(window);
+        for (auto& obj : fallingObjects) {
+            obj->draw(window);
+        }
         scoreCounter.draw(window);
         healthBar.draw(window);
 
@@ -107,11 +114,8 @@ int main()
                     scoreCounter.reset();
 
                     // Перезапускаем все яйца и бомбы
-                    for (int i = 0; i < count_eggs; i++) {
-                        eggs[i].restart();
-                    }
-                    for (int i = 0; i < count_bombs; i++) {
-                        bombs[i].restart();
+                    for (auto& obj : fallingObjects) {
+                        obj->restart();
                     }
                 }
             }
