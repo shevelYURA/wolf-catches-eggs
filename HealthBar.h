@@ -13,10 +13,10 @@ public:
     void draw(sf::RenderWindow& window);
 
 private:
-    sf::RectangleShape healthBarBackground;
-    sf::RectangleShape healthBarForeground;
-    sf::Text* healthText;
-    sf::Font font;
+    RectangleShape healthBarBackground;
+    RectangleShape healthBarForeground;
+    Text* healthText;
+    Font font;
 
     void updatePosition();
 };

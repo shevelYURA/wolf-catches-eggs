@@ -139,6 +139,7 @@
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayersAttack.cpp" />
     <ClCompile Include="Scorer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +148,7 @@
     <ClInclude Include="FallingObject.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayersAttack.h" />
     <ClInclude Include="Scorer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

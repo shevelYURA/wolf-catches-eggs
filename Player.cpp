@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player() : health(100)
+Player::Player() : health(100), attackKeyPressed(false)
 {
     if (!texWolf.loadFromFile("image/wolfTexture.png")) {
         throw;
@@ -17,7 +17,7 @@ Player::Player() : health(100)
     basket.setTexture(&texBasket);
 }
 
-void Player::update(float time)
+void Player::update(float time, const RenderWindow& window)
 {
     const float SPEED = 600.0f;
     Vector2f moveRec(0.f, 0.f);
@@ -40,23 +40,44 @@ void Player::update(float time)
     }
 
     basket.setPosition(Vector2f(wolf.getPosition().x, wolf.getPosition().y + 15 * 8));
+
+    handleAttack(window);
+
+    attack.update(time);
+}
+
+void Player::handleAttack(const RenderWindow& window)
+{
+    if (isAlive()) {
+        bool isMousePressed = Mouse::isButtonPressed(Mouse::Button::Left);
+
+        if (isMousePressed && !attackKeyPressed && !attack.isInFlight()) {
+            Vector2i mousePos = Mouse::getPosition(window);
+            Vector2f worldPos = window.mapPixelToCoords(mousePos);
+
+            FloatRect basketBounds = basket.getGlobalBounds();
+            float startX = basketBounds.position.x + basketBounds.size.x / 2.0f;
+            float startY = basketBounds.position.y;
+
+            attack.throwEgg(startX, startY, worldPos.x, worldPos.y);
+            attackKeyPressed = true;
+        }
+        else if (!isMousePressed) {
+            attackKeyPressed = false;
+        }
+    }
 }
 
 void Player::draw(RenderWindow& window)
 {
     window.draw(wolf);
     window.draw(basket);
+    if (attack.isInFlight()) { window.draw(attack.getShape()); }
 }
 
-FloatRect Player::getBasketBounds() const
-{
-    return basket.getGlobalBounds();
-}
+FloatRect Player::getBasketBounds() const { return basket.getGlobalBounds(); }
 
-int Player::getHealth() const
-{
-    return health;
-}
+int Player::getHealth() const { return health; }
 
 void Player::takeDamage(int damage)
 {
@@ -65,10 +86,7 @@ void Player::takeDamage(int damage)
     checkHealth();
 }
 
-bool Player::isAlive() const
-{
-    return health > 0;
-}
+bool Player::isAlive() const { return health > 0; }
 
 void Player::reset()
 {

@@ -6,23 +6,23 @@ HealthBar::HealthBar() : healthText(nullptr)  // Инициализируем у
         throw;
     }
 
-    healthText = new sf::Text(font);
+    healthText = new Text(font);
 
     // Настройка фона полоски здоровья
-    healthBarBackground.setSize(sf::Vector2f(400, 30));
-    healthBarBackground.setFillColor(sf::Color(100, 100, 100));
-    healthBarBackground.setOutlineColor(sf::Color::Black);
+    healthBarBackground.setSize(Vector2f(400, 30));
+    healthBarBackground.setFillColor(Color(100, 100, 100));
+    healthBarBackground.setOutlineColor(Color::Black);
     healthBarBackground.setOutlineThickness(2);
 
     // Настройка полоски здоровья
-    healthBarForeground.setSize(sf::Vector2f(400, 30));
-    healthBarForeground.setFillColor(sf::Color::Green);
+    healthBarForeground.setSize(Vector2f(400, 30));
+    healthBarForeground.setFillColor(Color::Green);
 
     // Настройка текста здоровья
     healthText->setString("Health: 100/100");
     healthText->setCharacterSize(36);
-    healthText->setFillColor(sf::Color::White);
-    healthText->setOutlineColor(sf::Color::Black);
+    healthText->setFillColor(Color::White);
+    healthText->setOutlineColor(Color::Black);
     healthText->setOutlineThickness(1);
 
     updatePosition();
@@ -36,16 +36,16 @@ HealthBar::~HealthBar()
 void HealthBar::update(int currentHealth, int maxHealth)
 {
     float healthPercent = static_cast<float>(currentHealth) / maxHealth;
-    healthBarForeground.setSize(sf::Vector2f(400 * healthPercent, 30));
+    healthBarForeground.setSize(Vector2f(400 * healthPercent, 30));
 
     if (healthPercent > 0.6f) {
-        healthBarForeground.setFillColor(sf::Color::Green);
+        healthBarForeground.setFillColor(Color::Green);
     }
     else if (healthPercent > 0.3f) {
-        healthBarForeground.setFillColor(sf::Color::Yellow);
+        healthBarForeground.setFillColor(Color::Yellow);
     }
     else {
-        healthBarForeground.setFillColor(sf::Color::Red);
+        healthBarForeground.setFillColor(Color::Red);
     }
 
     std::string healthString = "Health: " + std::to_string(currentHealth) + "/" + std::to_string(maxHealth);
@@ -54,7 +54,7 @@ void HealthBar::update(int currentHealth, int maxHealth)
     updatePosition();
 }
 
-void HealthBar::draw(sf::RenderWindow& window)
+void HealthBar::draw(RenderWindow& window)
 {
     window.draw(healthBarBackground);
     window.draw(healthBarForeground);
@@ -63,9 +63,9 @@ void HealthBar::draw(sf::RenderWindow& window)
 
 void HealthBar::updatePosition()
 {
-    sf::Vector2f position(1500, 20);
+    Vector2f position(1500, 20);
 
     healthBarBackground.setPosition(position);
     healthBarForeground.setPosition(position);
-    healthText->setPosition(sf::Vector2f(position.x, position.y + 40));
+    healthText->setPosition(Vector2f(position.x, position.y + 40));
 }

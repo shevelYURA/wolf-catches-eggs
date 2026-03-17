@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Scorer.h"
 #include "HealthBar.h"
+#include "PlayersAttack.h"
 #include <ctime>
 #include <cstdlib>
 #include <vector>
@@ -58,13 +59,11 @@ int main()
         }
 
         if (player.isAlive()) {
-            player.update(time);
+            player.update(time, window);
         }
 
         for (auto& obj : fallingObjects) {
             obj->move(time);
-
-            // Проверяем коллизию с игроком
             if (obj->collision(player.getBasketBounds())) {
                 // Определяем тип объекта через dynamic_cast
                 if (dynamic_cast<Egg*>(obj.get())) {
@@ -75,6 +74,20 @@ int main()
                     if (player.isAlive()) {
                         obj->restart();
                         player.takeDamage(20);
+                    }
+                }
+            }
+        }
+
+        if (player.getAttack().isInFlight()) {
+            for (auto& obj : fallingObjects) {
+                if (obj->collision(player.getAttack().getPosition())) {
+                    // Если это бомба - уничтожаем её
+                    if (dynamic_cast<Bomb*>(obj.get())) {
+                        obj->restart();  // "Уничтожаем" бомбу
+                        player.getAttack().stop();
+                        scoreCounter.addScore(100);
+                        break;
                     }
                 }
             }
