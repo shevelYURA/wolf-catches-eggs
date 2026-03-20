@@ -2,14 +2,14 @@
 
 Player::Player() : health(100)
 {
-    if (!texWolf.loadFromFile("image/wolfTexture1.png")) {
+    if (!texWolf.loadFromFile("image/wolfTexture.png")) {
         throw;
     }
     if (!texBasket.loadFromFile("image/basketTexture.png")) {
         throw;
     }
 
-    wolf.setSize(Vector2f(150, 150));
+    wolf.setSize(Vector2f(50, 150));
     wolf.setTexture(&texWolf);
     wolf.setPosition(Vector2f(910, 920));
 
