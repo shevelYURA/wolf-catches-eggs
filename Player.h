@@ -19,6 +19,8 @@ public:
 
     PlayersAttack& getAttack() { return attack; }
 
+    Vector2f getPosition() const { return wolf.getPosition(); }
+
 private:
     RectangleShape wolf;
     RectangleShape basket;

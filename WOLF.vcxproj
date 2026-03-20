@@ -135,6 +135,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="BossHealthbar.cpp" />
     <ClCompile Include="FallingObject.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="main.cpp" />
@@ -144,6 +146,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bombs.h" />
+    <ClInclude Include="Boss.h" />
+    <ClInclude Include="BossHealthbar.h" />
     <ClInclude Include="Eggs.h" />
     <ClInclude Include="FallingObject.h" />
     <ClInclude Include="HealthBar.h" />
