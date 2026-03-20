@@ -4,8 +4,13 @@
 #include "Player.h"
 #include "Scorer.h"
 #include "HealthBar.h"
+#include "PlayersAttack.h"
+#include "Boss.h"
+#include "BossHealthBar.h"
 #include <ctime>
 #include <cstdlib>
+#include <vector>
+#include <memory>
 
 using namespace sf;
 
@@ -16,6 +21,7 @@ int main()
     //----------------------------------------------------------------------------------//
 
     RenderWindow window(VideoMode({ 1920, 1080 }), "Wolf Catches Eggs");
+    window.setFramerateLimit(144);
 
     Image icon;
     if (!icon.loadFromFile("image/icon.png")) {
@@ -26,51 +32,93 @@ int main()
     //----------------------------------------------------------------------------------//
 
     Player player;
-    Eggs eggs[7];
-    Bombs bombs[3];
+    std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
+    for (int i = 0; i < count_eggs; ++i) {
+        fallingObjects.push_back(std::make_unique<Egg>());
+    }
     const int count_bombs = 3;
+    for (int i = 0; i < count_bombs; ++i) {
+        fallingObjects.push_back(std::make_unique<Bomb>());
+    }
     Scorer scoreCounter;
     HealthBar healthBar;
+
+    Boss boss;
+    BossHealthBar bossHealthBar;
+    bool bossDefeated = false;
 
     //----------------------------------------------------------------------------------//
 
     Clock clock;
-    float time;
 
     //----------------------------------------------------------------------------------//
 
     while (window.isOpen())
     {
-        time = clock.getElapsedTime().asMicroseconds();
-        time = time / 600000;
+        float time = clock.getElapsedTime().asMicroseconds() / 600000.0f;
         clock.restart();
-
+            
         while (const std::optional event = window.pollEvent())
         {
             if (event->is <Event::Closed>())
                 window.close();
         }
 
-        if (player.isAlive()) {
-            player.update(time);
+        if (scoreCounter.getScore() >= 5000 && !boss.isActive() && !bossDefeated) {
+            boss.activate();
+            bossHealthBar.setActive(true);
         }
 
-        for (int i = 0; i < count_eggs; i++)
-        {
-            eggs[i].move(time);
-            if (eggs[i].collision(player.getBasketBounds())) {
-                eggs[i].restart();
-                scoreCounter.addScore(500);
+        if (player.isAlive()) {
+            player.update(time, window);
+        }
+
+        for (auto& obj : fallingObjects) {
+            obj->move(time);
+            if (obj->collision(player.getBasketBounds())) {
+                if (dynamic_cast<Egg*>(obj.get())) {
+                    obj->restart();
+                    scoreCounter.addScore(500);
+                }
+                else if (dynamic_cast<Bomb*>(obj.get())) {
+                    if (player.isAlive()) {
+                        obj->restart();
+                        player.takeDamage(20);
+                    }
+                }
             }
         }
 
-        for (int i = 0; i < count_bombs; i++)
-        {
-            bombs[i].move(time);
-            if (player.isAlive() && bombs[i].collision(player.getBasketBounds())) {
-                bombs[i].restart();
-                player.takeDamage(20);
+        if (boss.isActive()) {
+            boss.update(time, window, player.getPosition());
+            bossHealthBar.update(boss.getHealth());
+
+            if (player.getAttack().isInFlight()) {
+                if (player.getAttack().getPosition().findIntersection(boss.getBounds()).has_value()) {
+                    boss.takeDamage(10);
+                    player.getAttack().stop();
+
+                    if (!boss.isAlive()) {
+                        boss.reset();
+                        bossHealthBar.setActive(false);
+                        scoreCounter.addScore(5000);
+                        bossDefeated = true;
+                    }
+                }
+            }
+        }
+
+        if (player.getAttack().isInFlight()) {
+            for (auto& obj : fallingObjects) {
+                if (obj->collision(player.getAttack().getPosition())) {
+                    if (dynamic_cast<Bomb*>(obj.get())) {
+                        obj->restart();
+                        player.getAttack().stop();
+                        scoreCounter.addScore(100);
+                        break;
+                    }
+                }
             }
         }
 
@@ -78,10 +126,16 @@ int main()
 
         window.clear();
         player.draw(window);
-        for (int i = 0; i < count_eggs; i++) eggs[i].draw(window);
-        for (int i = 0; i < count_bombs; i++) bombs[i].draw(window);
+        for (auto& obj : fallingObjects) {
+            obj->draw(window);
+        }
         scoreCounter.draw(window);
         healthBar.draw(window);
+
+        if (boss.isActive()) {
+            boss.draw(window);
+            bossHealthBar.draw(window);
+        }
 
         if (!player.isAlive()) {
             // Создаем временный текст для сообщения о смерти
@@ -105,13 +159,13 @@ int main()
                 if (Keyboard::isKeyPressed(Keyboard::Key::R)) {
                     player.reset();
                     scoreCounter.reset();
+                    boss.reset();
+                    bossHealthBar.setActive(false);
+                    bossDefeated = false;
 
                     // Перезапускаем все яйца и бомбы
-                    for (int i = 0; i < count_eggs; i++) {
-                        eggs[i].restart();
-                    }
-                    for (int i = 0; i < count_bombs; i++) {
-                        bombs[i].restart();
+                    for (auto& obj : fallingObjects) {
+                        obj->restart();
                     }
                 }
             }
