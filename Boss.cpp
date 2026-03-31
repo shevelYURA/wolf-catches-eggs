@@ -37,13 +37,15 @@ Boss::Boss() : health(100), active(false), moveSpeed(150.0f), directionChangeTim
     direction = Vector2f(1, 0);
 }
 
-void Boss::update(float time, const RenderWindow& window, const Vector2f& playerPosition)
+void Boss::update(float time, const RenderWindow& window, const Vector2f& playerPosition, const FloatRect& playerBounds)
 {
     if (!active) return;
 
     updateMovement(time);
     updateEyes(playerPosition);
     checkBounds();
+
+    attackSystem.update(time, body.getPosition(), playerPosition);
 }
 
 void Boss::updateMovement(float time)
@@ -111,6 +113,8 @@ void Boss::draw(RenderWindow& window)
     window.draw(eyeRight);
     window.draw(pupilLeft);
     window.draw(pupilRight);
+
+    attackSystem.draw(window);
 }
 
 void Boss::takeDamage(int damage)
@@ -122,31 +126,20 @@ void Boss::takeDamage(int damage)
     updateColor();
 }
 
-bool Boss::isAlive() const
-{
-    return active && health > 0;
-}
+bool Boss::isAlive() const{ return active && health > 0; }
 
-int Boss::getHealth() const
-{
-    return health;
-}
+int Boss::getHealth() const{ return health; }
 
-FloatRect Boss::getBounds() const
-{
-    return body.getGlobalBounds();
-}
+FloatRect Boss::getBounds() const{ return body.getGlobalBounds(); }
 
-bool Boss::isActive() const
-{
-    return active;
-}
+bool Boss::isActive() const{ return active; }
 
 void Boss::activate()
 {
     active = true;
     health = 100;
     body.setPosition(Vector2f(960, 200));
+    attackSystem.activate();
     updateColor();
 }
 
@@ -154,6 +147,7 @@ void Boss::reset()
 {
     active = false;
     health = 100;
+    attackSystem.reset();
 }
 
 void Boss::updateColor()

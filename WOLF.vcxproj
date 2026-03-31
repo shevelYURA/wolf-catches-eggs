@@ -136,6 +136,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="BossAttack.cpp" />
+    <ClCompile Include="BossBullet.cpp" />
     <ClCompile Include="BossHealthbar.cpp" />
     <ClCompile Include="FallingObject.cpp" />
     <ClCompile Include="HealthBar.cpp" />
@@ -147,6 +149,8 @@
   <ItemGroup>
     <ClInclude Include="Bombs.h" />
     <ClInclude Include="Boss.h" />
+    <ClInclude Include="BossAttack.h" />
+    <ClInclude Include="BossBullet.h" />
     <ClInclude Include="BossHealthbar.h" />
     <ClInclude Include="Eggs.h" />
     <ClInclude Include="FallingObject.h" />

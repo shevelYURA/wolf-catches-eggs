@@ -37,10 +37,6 @@ int main()
     for (int i = 0; i < count_eggs; ++i) {
         fallingObjects.push_back(std::make_unique<Egg>());
     }
-    const int count_bombs = 3;
-    for (int i = 0; i < count_bombs; ++i) {
-        fallingObjects.push_back(std::make_unique<Bomb>());
-    }
     Scorer scoreCounter;
     HealthBar healthBar;
 
@@ -79,20 +75,20 @@ int main()
             if (obj->collision(player.getBasketBounds())) {
                 if (dynamic_cast<Egg*>(obj.get())) {
                     obj->restart();
-                    scoreCounter.addScore(500);
-                }
-                else if (dynamic_cast<Bomb*>(obj.get())) {
-                    if (player.isAlive()) {
-                        obj->restart();
-                        player.takeDamage(20);
-                    }
+                    scoreCounter.addScore(5000);
                 }
             }
         }
 
         if (boss.isActive()) {
-            boss.update(time, window, player.getPosition());
+            boss.update(time, window, player.getBottomCenter(), player.getBounds());
             bossHealthBar.update(boss.getHealth());
+
+            for (auto& bullet : boss.getAttackSystem().getBullets()) {
+                if (bullet->checkPlayerCollision(player.getBounds())) {
+                    player.takeDamage(20);
+                }
+            }
 
             if (player.getAttack().isInFlight()) {
                 if (player.getAttack().getPosition().findIntersection(boss.getBounds()).has_value()) {
@@ -138,7 +134,7 @@ int main()
         }
 
         if (!player.isAlive()) {
-            // Создаем временный текст для сообщения о смерти
+            // Временный текст для сообщения о смерти
             Font font;
             if (font.openFromFile("image/ARCADECLASSIC.ttf")) {
                 Text gameOverText(font);

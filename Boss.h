@@ -1,25 +1,11 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "PlayersAttack.h"
+#include "BossAttack.h"
 using namespace sf;
 
 class Boss
 {
-public:
-    Boss();
-
-    void update(float time, const RenderWindow& window, const Vector2f& playerPosition);
-    void draw(RenderWindow& window);
-    void takeDamage(int damage);
-
-    bool isAlive() const;
-    int getHealth() const;
-    FloatRect getBounds() const;
-    bool isActive() const;
-    void activate();
-    void reset();
-
-private:
     RectangleShape body;
     Texture texBoss;
     CircleShape eyeLeft;
@@ -33,9 +19,27 @@ private:
     Vector2f direction;
     float directionChangeTimer;
 
+    BossAttack attackSystem;
+
     void updateEyes(const Vector2f& playerPosition);
     void updateMovement(float time);
     void checkBounds();
     void updateColor();
+
+public:
+    Boss();
+
+    void update(float time, const RenderWindow& window, const Vector2f& playerPosition, const FloatRect& playerBounds);
+    void draw(RenderWindow& window);
+    void takeDamage(int damage);
+
+    bool isAlive() const;
+    int getHealth() const;
+    FloatRect getBounds() const;
+    bool isActive() const;
+    void activate();
+    void reset();
+
+    BossAttack& getAttackSystem() { return attackSystem; }
 };
 

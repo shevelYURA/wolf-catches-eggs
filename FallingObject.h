@@ -3,6 +3,7 @@
 using namespace sf;
 
 class FallingObject {
+    void init(const std::string& texturePath, const Vector2f& size);
 public:
     FallingObject(const std::string& texturePath, const Vector2f& size);
     virtual ~FallingObject() = default;
@@ -28,7 +29,4 @@ protected:
     float speed;
     float waitTimer;
     float waitTime;
-
-private:
-    void init(const std::string& texturePath, const Vector2f& size);
 };

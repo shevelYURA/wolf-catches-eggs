@@ -77,6 +77,15 @@ void Player::draw(RenderWindow& window)
 
 FloatRect Player::getBasketBounds() const { return basket.getGlobalBounds(); }
 
+FloatRect Player::getBounds() const { return wolf.getGlobalBounds(); }
+
+Vector2f Player::getBottomCenter() const
+{
+    FloatRect bounds = wolf.getGlobalBounds();
+    return Vector2f(bounds.position.x + bounds.size.x / 2.0f,
+        bounds.position.y + bounds.size.y);
+}
+
 int Player::getHealth() const { return health; }
 
 void Player::takeDamage(int damage)

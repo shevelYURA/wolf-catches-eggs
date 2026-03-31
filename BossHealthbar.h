@@ -6,6 +6,14 @@ using namespace sf;
 
 class BossHealthBar
 {
+    RectangleShape healthBarBackground;
+    RectangleShape healthBarForeground;
+    Text* healthText;
+    Font font;
+    bool active;
+
+    void updatePosition();
+
 public:
     BossHealthBar();
     ~BossHealthBar();
@@ -14,13 +22,4 @@ public:
     void draw(sf::RenderWindow& window);
     void setActive(bool active);
     bool isActive() const;
-
-private:
-    RectangleShape healthBarBackground;
-    RectangleShape healthBarForeground;
-    Text* healthText;
-    Font font;
-    bool active;
-
-    void updatePosition();
 };

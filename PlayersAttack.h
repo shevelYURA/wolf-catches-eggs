@@ -4,14 +4,13 @@ using namespace sf;
 
 class PlayersAttack
 {
-private:
 	Vector2f atk_Position;
 	CircleShape atk_Egg;
 	bool atk_InFlight = false;
 	float atk_EggSpeed = 1000;
-	sf::Vector2f atk_EggDistance;
-	sf::Vector2f atk_Max;
-	sf::Vector2f atk_Min;
+	Vector2f atk_EggDistance;
+	Vector2f atk_Max;
+	Vector2f atk_Min;
 	
 public:
 	PlayersAttack();

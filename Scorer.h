@@ -5,6 +5,11 @@ using namespace sf;
 
 class Scorer
 {
+    int score;
+    Font font;
+    Text* scoreText;
+    void updateText();
+
 public:
     Scorer();
     ~Scorer();
@@ -13,12 +18,5 @@ public:
     void reset();
     void draw(RenderWindow& window);
     int getScore() const;
-
-private:
-    int score;
-    Font font;
-    Text* scoreText;
-
-    void updateText();
 };
 
