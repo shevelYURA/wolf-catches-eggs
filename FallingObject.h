@@ -3,9 +3,9 @@
 using namespace sf;
 
 class FallingObject {
-    void init(const std::string& texturePath, const Vector2f& size);
+    void init(int resourceId, const Vector2f& size);
 public:
-    FallingObject(const std::string& texturePath, const Vector2f& size);
+    FallingObject(int resourceId, const Vector2f& size);
     virtual ~FallingObject() = default;
 
     virtual void move(float time);

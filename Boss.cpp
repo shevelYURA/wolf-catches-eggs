@@ -1,37 +1,33 @@
 #include "Boss.h"
+#include "ResourceManager.h"
 #include <cmath>
 #include <cstdlib>
 
 Boss::Boss() : health(100), active(false), moveSpeed(150.0f), directionChangeTimer(0)
 {
-    if (!texBoss.loadFromFile("image/bossTexture.png")) {
-        // Если нет текстуры босса, создадим заливку цветом
-        body.setFillColor(Color(50, 50, 150));
-    }
-    else {
-        body.setTexture(&texBoss);
-    }
+    texBoss = ResourceManager::getTexture(IDB_PNG4);
+    body.setTexture(&texBoss);
 
     body.setSize(Vector2f(120, 120));
     body.setOrigin(Vector2f(60, 60));
     body.setPosition(Vector2f(960, 200));
 
     // Глаза
-    eyeLeft.setRadius(15);
+    eyeLeft.setRadius(10);
     eyeLeft.setFillColor(Color::White);
-    eyeLeft.setOrigin(Vector2f(15, 15));
+    eyeLeft.setOrigin(Vector2f(10, 10));
 
-    eyeRight.setRadius(15);
+    eyeRight.setRadius(10);
     eyeRight.setFillColor(Color::White);
-    eyeRight.setOrigin(Vector2f(15, 15));
+    eyeRight.setOrigin(Vector2f(10, 10));
 
-    pupilLeft.setRadius(7);
+    pupilLeft.setRadius(3);
     pupilLeft.setFillColor(Color::Black);
-    pupilLeft.setOrigin(Vector2f(7, 7));
+    pupilLeft.setOrigin(Vector2f(3, 3));
 
-    pupilRight.setRadius(7);
+    pupilRight.setRadius(3);
     pupilRight.setFillColor(Color::Black);
-    pupilRight.setOrigin(Vector2f(7, 7));
+    pupilRight.setOrigin(Vector2f(3, 3));
 
     // Начальное направление движения
     direction = Vector2f(1, 0);
@@ -76,12 +72,12 @@ void Boss::updateEyes(const Vector2f& playerPosition)
         float eyeOffsetX = toPlayer.x * 8;
         float eyeOffsetY = toPlayer.y * 8;
 
-        pupilLeft.setPosition(Vector2f(bossPos.x - 35 + eyeOffsetX, bossPos.y - 25 + eyeOffsetY));
-        pupilRight.setPosition(Vector2f(bossPos.x + 35 + eyeOffsetX, bossPos.y - 25 + eyeOffsetY));
+        pupilLeft.setPosition(Vector2f(bossPos.x - 15 + eyeOffsetX, bossPos.y - 25 + eyeOffsetY));
+        pupilRight.setPosition(Vector2f(bossPos.x + 15 + eyeOffsetX, bossPos.y - 25 + eyeOffsetY));
 
         // Белки глаз
-        eyeLeft.setPosition(Vector2f(bossPos.x - 35, bossPos.y - 25));
-        eyeRight.setPosition(Vector2f(bossPos.x + 35, bossPos.y - 25));
+        eyeLeft.setPosition(Vector2f(bossPos.x - 15, bossPos.y - 25));
+        eyeRight.setPosition(Vector2f(bossPos.x + 15, bossPos.y - 25));
     }
     else {
         // Если игрок на той же позиции, просто центрируем зрачки
@@ -137,7 +133,7 @@ bool Boss::isActive() const{ return active; }
 void Boss::activate()
 {
     active = true;
-    health = 100;
+    health = 1000;
     body.setPosition(Vector2f(960, 200));
     attackSystem.activate();
     updateColor();

@@ -39,6 +39,12 @@
     <ClCompile Include="BossHealthbar.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="BossAttack.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="BossBullet.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h">
@@ -68,5 +74,51 @@
     <ClInclude Include="BossHealthbar.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="BossAttack.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="BossBullet.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc">
+      <Filter>Файлы ресурсов</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="bitmap1.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="image\basketTexture.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="image\bombTexture.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="image\bossTexture.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="image\eggsTexture.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="image\icon.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="image\wolfTexture.PNG">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="image\wolfTexture1.PNG">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="image\ARCADECLASSIC.ttf" />
   </ItemGroup>
 </Project>

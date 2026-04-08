@@ -157,7 +157,25 @@
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayersAttack.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scorer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="bitmap1.bmp" />
+    <Image Include="image\basketTexture.png" />
+    <Image Include="image\bombTexture.png" />
+    <Image Include="image\bossTexture.png" />
+    <Image Include="image\eggsTexture.png" />
+    <Image Include="image\icon.png" />
+    <Image Include="image\wolfTexture.PNG" />
+    <Image Include="image\wolfTexture1.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="image\ARCADECLASSIC.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

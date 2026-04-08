@@ -1,7 +1,8 @@
 #pragma once
 #include "FallingObject.h"
+#include "resource.h"
 
 class Egg : public FallingObject {
 public:
-    Egg() : FallingObject("image/eggsTexture.png", Vector2f(40, 35)) {}
+    Egg() : FallingObject(IDB_PNG5, Vector2f(40, 35)) {}
 };

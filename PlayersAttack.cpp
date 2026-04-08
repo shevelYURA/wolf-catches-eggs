@@ -21,10 +21,6 @@ void PlayersAttack::throwEgg(float startX, float startY,
 		atk_EggDistance.y = (dy / distance) * atk_EggSpeed;
 	}
 
-	float range = 1000;
-	atk_Min = { startX - range, startY - range };
-	atk_Max = { startX + range, startY + range };
-
 	atk_Egg.setPosition(atk_Position);
 }
 
@@ -36,15 +32,17 @@ FloatRect PlayersAttack::getPosition() { return atk_Egg.getGlobalBounds(); }
 
 CircleShape PlayersAttack::getShape() { return atk_Egg; }
 
-void PlayersAttack::update(float elapsedTime) {
+void PlayersAttack::update(float elapsedTime, const RenderWindow& window) {
 	if (atk_InFlight) {
 		atk_Position.x += atk_EggDistance.x * elapsedTime;
 		atk_Position.y += atk_EggDistance.y * elapsedTime;
 
 		atk_Egg.setPosition(atk_Position);
 
-		if (atk_Position.x < atk_Min.x || atk_Position.x > atk_Max.x ||
-			atk_Position.y < atk_Min.y || atk_Position.y > atk_Max.y) {
+		Vector2u windowSize = window.getSize();
+
+		if (atk_Position.x < -100 || atk_Position.x > windowSize.x + 100 ||
+			atk_Position.y < -100 || atk_Position.y > windowSize.y + 100) {
 			atk_InFlight = false;
 		}
 	}

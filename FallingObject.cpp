@@ -1,14 +1,16 @@
 #include "FallingObject.h"
+#include "ResourceManager.h"
 
-FallingObject::FallingObject(const std::string& texturePath, const Vector2f& size) {
-    init(texturePath, size);
+FallingObject::FallingObject(int resourceId, const Vector2f& size) {
+    texture = ResourceManager::getTexture(resourceId);
+    shape.setSize(size);
+    shape.setTexture(&texture);
+    speed = 70.0f;
     restart();
 }
 
-void FallingObject::init(const std::string& texturePath, const Vector2f& size) {
-    if (!texture.loadFromFile(texturePath)) {
-        throw;
-    }
+void FallingObject::init(int resourceId, const Vector2f& size) {
+    texture = ResourceManager::getTexture(resourceId);
 
     shape.setSize(size);
     shape.setTexture(&texture);
@@ -50,7 +52,7 @@ bool FallingObject::collision(FloatRect object) {
 }
 
 void FallingObject::restart() {
-    waitTime = (rand() % 5) + 1;
+    waitTime = static_cast<float>((rand() % 5) + 1);
     waitTimer = 0;
     currentState = waiting;
     shape.setPosition(Vector2f{ -100, -100 });
