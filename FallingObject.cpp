@@ -63,6 +63,8 @@ FloatRect FallingObject::getBounds() const {
 bool FallingObject::isFalling() const {
     return currentState == falling;
 }
-    void FallingObject::setColor(const sf::Color& color) {
+
+void FallingObject::setColor(const sf::Color& color) {
+  
     shape.setFillColor(color);
 }
