@@ -74,8 +74,17 @@ int main()
             obj->move(time);
             if (obj->collision(player.getBasketBounds())) {
                 if (dynamic_cast<Egg*>(obj.get())) {
-                    obj->restart();
-                    scoreCounter.addScore(5000);
+    // 20% шанс, что яйцо золотое
+    bool isGolden = (rand() % 100 < 20);
+    
+    obj->restart();
+    
+    if (isGolden) {
+        scoreCounter.addScore(25000);  // Золотое яйцо: x5 (25000)
+    } else {
+        scoreCounter.addScore(5000);   // Обычное яйцо: 5000 очков
+    }
+}
                 }
             }
         }
