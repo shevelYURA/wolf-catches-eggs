@@ -15,9 +15,8 @@ public:
 
     FloatRect getBounds() const;
     bool isFalling() const;
-void setColor(const sf::Color& color);
 
-void setColor(const sf::Color& color);
+    void setColor(const sf::Color& color);
 
 protected:
     RectangleShape shape;
