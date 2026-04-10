@@ -12,9 +12,9 @@ void FallingObject::init(const std::string& texturePath, const Vector2f& size) {
 
     shape.setSize(size);
     shape.setTexture(&texture);
+    shape.setFillColor(sf::Color::White);  // обычный цвет по умолчанию
     speed = 70.0f;
 }
-
 void FallingObject::move(float time) {
     switch (currentState) {
     case waiting:
@@ -62,4 +62,7 @@ FloatRect FallingObject::getBounds() const {
 
 bool FallingObject::isFalling() const {
     return currentState == falling;
+}
+    void FallingObject::setColor(const sf::Color& color) {
+    shape.setFillColor(color);
 }
