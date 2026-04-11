@@ -88,9 +88,9 @@ int main()
                     obj->restart();
     
                     if (isGolden) {
-                        scoreCounter.addScore(25000);  // Золотое яйцо: x5 (25000)
+                        scoreCounter.addScore(2500);  // Золотое яйцо: x5 (25000)
                     } else {
-                        scoreCounter.addScore(5000);   // Обычное яйцо: 5000 очков
+                        scoreCounter.addScore(500);   // Обычное яйцо: 5000 очков
                     }
                 }
             }
@@ -114,7 +114,7 @@ int main()
                     if (!boss.isAlive()) {
                         boss.reset();
                         bossHealthBar.setActive(false);
-                        scoreCounter.addScore(5000);
+                        scoreCounter.addScore(50000);
                         bossDefeated = true;
                     }
                 }

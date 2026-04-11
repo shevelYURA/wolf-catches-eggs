@@ -34,7 +34,7 @@ void BossHealthBar::update(int currentHealth, int maxHealth)
     if (!active) return;
 
     float healthPercent = static_cast<float>(currentHealth) / maxHealth;
-    healthBarForeground.setSize(Vector2f(600 * healthPercent / 10, 40));
+    healthBarForeground.setSize(Vector2f(600 * healthPercent, 40));
 
     std::string healthString = "BOSS Health: " + std::to_string(currentHealth) + "/" + std::to_string(maxHealth);
     healthText->setString(healthString);

@@ -18,7 +18,7 @@ public:
     BossHealthBar();
     ~BossHealthBar();
 
-    void update(int currentHealth, int maxHealth = 100);
+    void update(int currentHealth, int maxHealth = 1000);
     void draw(sf::RenderWindow& window);
     void setActive(bool active);
     bool isActive() const;
