@@ -1,10 +1,9 @@
 #include "HealthBar.h"
+#include "ResourceManager.h"
 
-HealthBar::HealthBar() : healthText(nullptr)  // Инициализируем указатель
+HealthBar::HealthBar() : healthText(nullptr)
 {
-    if (!font.openFromFile("image/ARCADECLASSIC.ttf")) {
-        throw;
-    }
+    font = ResourceManager::getFont(0);
 
     healthText = new Text(font);
 

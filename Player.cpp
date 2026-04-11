@@ -1,13 +1,10 @@
 #include "Player.h"
+#include "ResourceManager.h"
 
 Player::Player() : health(100), attackKeyPressed(false)
 {
-    if (!texWolf.loadFromFile("image/wolfTexture1.png")) {
-        throw;
-    }
-    if (!texBasket.loadFromFile("image/basketTexture.png")) {
-        throw;
-    }
+    texWolf = ResourceManager::getTexture(IDB_PNG1);
+    texBasket = ResourceManager::getTexture(IDB_PNG2);
 
     wolf.setSize(Vector2f(150, 150));
     wolf.setTexture(&texWolf);
@@ -43,7 +40,7 @@ void Player::update(float time, const RenderWindow& window)
 
     handleAttack(window);
 
-    attack.update(time);
+    attack.update(time, window);
 }
 
 void Player::handleAttack(const RenderWindow& window)

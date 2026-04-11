@@ -20,6 +20,6 @@ public:
 		float targetX, float targetY);
 	FloatRect getPosition();
 	CircleShape getShape();
-	void update(float elapedTime);
+	void update(float elapsedTime, const RenderWindow& window);
 };
 

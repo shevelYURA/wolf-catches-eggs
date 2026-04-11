@@ -1,8 +1,9 @@
 #include "Scorer.h"
+#include "ResourceManager.h"
 
 Scorer::Scorer() : score(0), scoreText(nullptr)
 {
-	if (!font.openFromFile("image/ARCADECLASSIC.ttf")) {}
+    font = ResourceManager::getFont(0);
 
     scoreText = new Text(font);
 

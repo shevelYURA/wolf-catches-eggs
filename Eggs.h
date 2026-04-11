@@ -1,5 +1,6 @@
 #pragma once
 #include "FallingObject.h"
+#include "resource.h"
 
 class Egg : public FallingObject {
 private:

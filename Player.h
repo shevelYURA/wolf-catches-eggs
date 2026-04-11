@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "PlayersAttack.h"
+#include "ResourceManager.h"
 using namespace sf;
 
 class Player

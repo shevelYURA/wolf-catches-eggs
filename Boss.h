@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "PlayersAttack.h"
 #include "BossAttack.h"
+#include "ResourceManager.h"
 using namespace sf;
 
 class Boss

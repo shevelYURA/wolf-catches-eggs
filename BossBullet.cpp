@@ -1,4 +1,5 @@
 #include "BossBullet.h"
+#include "ResourceManager.h"
 #include <cmath>
 #include <cstdlib>
 
@@ -49,14 +50,9 @@ BossBullet::BossBullet(Type type, const Vector2f& startPos, const Vector2f& targ
 
 void BossBullet::initShape()
 {
-    if (!texture.loadFromFile("image/bombTexture.png")) {
-        shape.setSize(Vector2f(35, 35));
-        shape.setFillColor(Color(255, 100, 100));
-    }
-    else {
-        shape.setSize(Vector2f(35, 35));
-        shape.setTexture(&texture);
-    }
+    texture = ResourceManager::getTexture(IDB_PNG3);  // bombTexture
+    shape.setSize(Vector2f(35, 35));
+    shape.setTexture(&texture);
     shape.setOrigin(Vector2f(17.5f, 17.5f));
 }
 

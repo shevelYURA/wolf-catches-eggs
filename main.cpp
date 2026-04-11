@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <vector>
 #include <memory>
+#include "ResourceManager.h"
 
 using namespace sf;
 
@@ -23,11 +24,23 @@ int main()
     RenderWindow window(VideoMode({ 1920, 1080 }), "Wolf Catches Eggs");
     window.setFramerateLimit(144);
 
-    Image icon;
-    if (!icon.loadFromFile("image/icon.png")) {
-        return 1;
+    // Загрузка иконки
+    // Загрузка иконки с обработкой ошибок
+    HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDB_PNG6), L"PNG");
+    if (hRes) {
+        HGLOBAL hData = LoadResource(NULL, hRes);
+        if (hData) {
+            void* pData = LockResource(hData);
+            DWORD size = SizeofResource(NULL, hRes);
+            if (pData && size > 0) {
+                Image icon;
+                if (icon.loadFromMemory(pData, size)) {
+                    window.setIcon(icon);
+                }
+            }
+        }
     }
-    window.setIcon(icon);
+    // Если иконка не загрузилась - просто продолжаем без неё
 
     //----------------------------------------------------------------------------------//
 
@@ -39,25 +52,20 @@ int main()
     }
     Scorer scoreCounter;
     HealthBar healthBar;
-
     Boss boss;
     BossHealthBar bossHealthBar;
     bool bossDefeated = false;
 
-    //----------------------------------------------------------------------------------//
-
     Clock clock;
-
-    //----------------------------------------------------------------------------------//
 
     while (window.isOpen())
     {
         float time = clock.getElapsedTime().asMicroseconds() / 600000.0f;
         clock.restart();
-            
+
         while (const std::optional event = window.pollEvent())
         {
-            if (event->is <Event::Closed>())
+            if (event->is<Event::Closed>())
                 window.close();
         }
 
@@ -94,7 +102,7 @@ int main()
 
             for (auto& bullet : boss.getAttackSystem().getBullets()) {
                 if (bullet->checkPlayerCollision(player.getBounds())) {
-                    player.takeDamage(20);
+                    player.takeDamage(25);
                 }
             }
 
@@ -142,39 +150,35 @@ int main()
         }
 
         if (!player.isAlive()) {
-            // Временный текст для сообщения о смерти
-            Font font;
-            if (font.openFromFile("image/ARCADECLASSIC.ttf")) {
-                Text gameOverText(font);
-                gameOverText.setString("GAME OVER! Press R to restart");
-                gameOverText.setCharacterSize(72);
-                gameOverText.setFillColor(Color::Red);
-                gameOverText.setOutlineColor(Color::Black);
-                gameOverText.setOutlineThickness(3);
+            Font& font = ResourceManager::getFont(0);
+            Text gameOverText(font);
+            gameOverText.setString("GAME OVER! Press R to restart");
+            gameOverText.setCharacterSize(72);
+            gameOverText.setFillColor(Color::Red);
+            gameOverText.setOutlineColor(Color::Black);
+            gameOverText.setOutlineThickness(3);
 
-                // Центрируем текст
-                FloatRect textBounds = gameOverText.getLocalBounds();
-                gameOverText.setOrigin(Vector2f(textBounds.size.x / 2, textBounds.size.y / 2));
-                gameOverText.setPosition(Vector2f(960, 540));
+            FloatRect textBounds = gameOverText.getLocalBounds();
+            gameOverText.setOrigin(Vector2f(textBounds.size.x / 2, textBounds.size.y / 2));
+            gameOverText.setPosition(Vector2f(960, 540));
 
-                window.draw(gameOverText);
+            window.draw(gameOverText);
 
-                // Проверка нажатия R для рестарта
-                if (Keyboard::isKeyPressed(Keyboard::Key::R)) {
-                    player.reset();
-                    scoreCounter.reset();
-                    boss.reset();
-                    bossHealthBar.setActive(false);
-                    bossDefeated = false;
+            if (Keyboard::isKeyPressed(Keyboard::Key::R)) {
+                player.reset();
+                scoreCounter.reset();
+                boss.reset();
+                bossHealthBar.setActive(false);
+                bossDefeated = false;
 
-                    // Перезапускаем все яйца и бомбы
-                    for (auto& obj : fallingObjects) {
-                        obj->restart();
-                    }
+                for (auto& obj : fallingObjects) {
+                    obj->restart();
                 }
             }
         }
 
         window.display();
     }
+
+    return 0;
 }
