@@ -49,7 +49,7 @@ int main()
     const int count_eggs = 7;
    for (int i = 0; i < count_eggs; ++i) {
     auto egg = std::make_unique<Egg>();  // 20% шанс сделать яйцо золотым
-    if (rand() % 100 < 20) {
+    if (rand() % 100 < 100) {
         egg->setGolden(true);
     }
     
