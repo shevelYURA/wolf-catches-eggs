@@ -172,6 +172,7 @@
     <Image Include="image\basketTexture.png" />
     <Image Include="image\bombTexture.png" />
     <Image Include="image\bossTexture.png" />
+    <Image Include="image\egg.png" />
     <Image Include="image\eggsTexture.png" />
     <Image Include="image\icon.png" />
     <Image Include="image\wolfTexture.PNG" />

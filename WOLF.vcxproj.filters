@@ -120,6 +120,9 @@
     <Image Include="image\wolfTexture1.PNG">
       <Filter>Файлы ресурсов</Filter>
     </Image>
+    <Image Include="image\egg.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="image\ARCADECLASSIC.ttf" />

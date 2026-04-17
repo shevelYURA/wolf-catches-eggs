@@ -1,12 +1,13 @@
 #pragma once
 #include "FallingObject.h"
+#include "resource.h"
 
 class Egg : public FallingObject {
 private:
     bool isGolden; // Золотое яйцо или нет
 
 public:
-    Egg() : FallingObject("image/egg.png", Vector2f(40, 35)), isGolden(false) {}
+    Egg() : FallingObject(IDB_PNG5, Vector2f(40, 35)), isGolden(false) {}
     
     void setGolden(bool golden) {
         isGolden = golden;
