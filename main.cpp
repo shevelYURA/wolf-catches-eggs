@@ -94,9 +94,9 @@ int main()
                     obj->restart();
                     
                     if (egg->getGolden()) {
-                        scoreCounter.addScore(25000);  // Золотое: 25000 очков
+                        scoreCounter.addScore(1500);  // Золотое: 1500 очков
                     } else {
-                        scoreCounter.addScore(5000);   // Обычное: 5000 очков
+                        scoreCounter.addScore(500);   // Обычное: 500 очков
                     }
                 }
             }
