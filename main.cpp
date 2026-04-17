@@ -65,6 +65,10 @@ int main()
     BossHealthBar bossHealthBar;
     bool bossDefeated = false;
 
+    // БУСТ: Двойные очки
+    bool doublePoints = false;
+    float doublePointsTimer = 0.0f;
+
     Clock clock;
 
     while (window.isOpen())
@@ -76,6 +80,14 @@ int main()
         {
             if (event->is<Event::Closed>())
                 window.close();
+
+            // Активация буста по клавише P
+            if (event->is<Event::KeyPressed>() && event->get<Event::KeyPressed>().code == Keyboard::Key::P) {
+                if (!doublePoints) {
+                    doublePoints = true;
+                    doublePointsTimer = 5.0f;
+                }
+            }
         }
 
         // Диалог перед боссом
@@ -129,11 +141,13 @@ int main()
                 if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
                     obj->restart();
                     
-                    if (egg->getGolden()) {
-                        scoreCounter.addScore(1500);  // Золотое: 1500 очков
-                    } else {
-                        scoreCounter.addScore(500);   // Обычное: 500 очков
+                    int points = egg->getGolden() ? 1500 : 500;
+
+                    if (doublePoints) {
+                        points *= 2;
                     }
+
+                    scoreCounter.addScore(points);
                 }
             }
         }
@@ -173,6 +187,14 @@ int main()
                         break;
                     }
                 }
+            }
+        }
+
+        // Таймер для двойных очков
+        if (doublePoints) {
+            doublePointsTimer -= time;
+            if (doublePointsTimer <= 0) {
+                doublePoints = false;
             }
         }
 
