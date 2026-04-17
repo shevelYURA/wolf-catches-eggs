@@ -25,7 +25,6 @@ int main()
     window.setFramerateLimit(144);
 
     // Загрузка иконки
-    // Загрузка иконки с обработкой ошибок
     HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDB_PNG6), L"PNG");
     if (hRes) {
         HGLOBAL hData = LoadResource(NULL, hRes);
@@ -40,19 +39,25 @@ int main()
             }
         }
     }
-    // Если иконка не загрузилась - просто продолжаем без неё
 
     //----------------------------------------------------------------------------------//
 
     Player player;
     std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
-   for (int i = 0; i < count_eggs; ++i) {
-    auto egg = std::make_unique<Egg>();  // 20% шанс сделать яйцо золотым
-        egg->setGolden(true);
     
-    fallingObjects.push_back(std::move(egg));
-}
+    // СОЗДАНИЕ ЯИЦ С 20% ШАНСОМ ЗОЛОТОГО
+    for (int i = 0; i < count_eggs; ++i) {
+        auto egg = std::make_unique<Egg>();
+        
+        // 20% шанс сделать яйцо золотым
+        if (rand() % 100 < 20) {
+            egg->setGolden(true);
+        }
+        
+        fallingObjects.push_back(std::move(egg));
+    }
+    
     Scorer scoreCounter;
     HealthBar healthBar;
     Boss boss;
@@ -81,18 +86,19 @@ int main()
             player.update(time, window);
         }
 
+        // ОБРАБОТКА СТОЛКНОВЕНИЙ С ЯЙЦАМИ
         for (auto& obj : fallingObjects) {
             obj->move(time);
             if (obj->collision(player.getBasketBounds())) {
-              if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
-    obj->restart();
-    
-    if (egg->getGolden()) {
-        scoreCounter.addScore(25000);  // Золотое яйцо: 25000 очков
-    } else {
-        scoreCounter.addScore(5000);   // Обычное яйцо: 5000 очков
-    }
-}
+                if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
+                    obj->restart();
+                    
+                    if (egg->getGolden()) {
+                        scoreCounter.addScore(25000);  // Золотое: 25000 очков
+                    } else {
+                        scoreCounter.addScore(5000);   // Обычное: 5000 очков
+                    }
+                }
             }
         }
 
