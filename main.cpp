@@ -26,7 +26,6 @@ int main()
     window.setFramerateLimit(144);
 
     // Загрузка иконки
-    // Загрузка иконки с обработкой ошибок
     HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDB_PNG6), L"PNG");
     if (hRes) {
         HGLOBAL hData = LoadResource(NULL, hRes);
@@ -41,16 +40,25 @@ int main()
             }
         }
     }
-    // Если иконка не загрузилась - просто продолжаем без неё
 
     //----------------------------------------------------------------------------------//
 
     Player player;
     std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
+    
+    // СОЗДАНИЕ ЯИЦ С 20% ШАНСОМ ЗОЛОТОГО
     for (int i = 0; i < count_eggs; ++i) {
-        fallingObjects.push_back(std::make_unique<Egg>());
+        auto egg = std::make_unique<Egg>();
+        
+        // 20% шанс сделать яйцо золотым
+        if (rand() % 100 < 20) {
+            egg->setGolden(true);
+        }
+        
+        fallingObjects.push_back(std::move(egg));
     }
+    
     Scorer scoreCounter;
     HealthBar healthBar;
     Boss boss;
@@ -114,19 +122,17 @@ int main()
             player.update(time, window);
         }
 
+        // ОБРАБОТКА СТОЛКНОВЕНИЙ С ЯЙЦАМИ
         for (auto& obj : fallingObjects) {
             obj->move(time);
             if (obj->collision(player.getBasketBounds())) {
-                if (dynamic_cast<Egg*>(obj.get())) {
-                    // 20% шанс, что яйцо золотое
-                    bool isGolden = (rand() % 100 < 20);
-    
+                if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
                     obj->restart();
-    
-                    if (isGolden) {
-                        scoreCounter.addScore(2500);  // Золотое яйцо: x5 (2500)
+                    
+                    if (egg->getGolden()) {
+                        scoreCounter.addScore(1500);  // Золотое: 1500 очков
                     } else {
-                        scoreCounter.addScore(500);   // Обычное яйцо: 500 очков
+                        scoreCounter.addScore(500);   // Обычное: 500 очков
                     }
                 }
             }
