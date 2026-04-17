@@ -12,6 +12,7 @@
 #include <vector>
 #include <memory>
 #include "ResourceManager.h"
+#include "dialog.h"
 
 using namespace sf;
 
@@ -69,9 +70,44 @@ int main()
                 window.close();
         }
 
-        if (scoreCounter.getScore() >= 5000 && !boss.isActive() && !bossDefeated) {
-            boss.activate();
-            bossHealthBar.setActive(true);
+        // Диалог перед боссом
+        static Dialog bossDialog;
+        static bool dialogShown = false;
+        static bool waitingForChoice = false;
+        static bool playerChoseStop = false;
+
+        // Инициализация диалога (выполняется один раз)
+        static bool dialogInitialized = false;
+        if (!dialogInitialized) {
+            bossDialog.setCallbacks(
+                [&]() {
+                    // Выбрал STOP - рестарт игры
+                    playerChoseStop = true;
+                    waitingForChoice = false;
+                },
+                [&]() {
+                    // Выбрал CONTINUE - появляется босс
+                    boss.activate();
+                    bossHealthBar.setActive(true);
+                    waitingForChoice = false;
+                }
+            );
+            dialogInitialized = true;
+        }
+
+        if (scoreCounter.getScore() >= 5000 && !boss.isActive() && !bossDefeated && !dialogShown && !playerChoseStop) {
+            bossDialog.show();
+            dialogShown = true;
+            waitingForChoice = true;
+        }
+
+        if (bossDialog.isActive()) {
+            bossDialog.handleInput(window);
+        }
+
+        if (playerChoseStop) {
+            player.takeDamage(100); // Убиваем игрока для показа game over
+            playerChoseStop = false;
         }
 
         if (player.isAlive()) {
@@ -88,9 +124,9 @@ int main()
                     obj->restart();
     
                     if (isGolden) {
-                        scoreCounter.addScore(2500);  // Золотое яйцо: x5 (25000)
+                        scoreCounter.addScore(2500);  // Золотое яйцо: x5 (2500)
                     } else {
-                        scoreCounter.addScore(500);   // Обычное яйцо: 5000 очков
+                        scoreCounter.addScore(500);   // Обычное яйцо: 500 очков
                     }
                 }
             }
@@ -170,14 +206,18 @@ int main()
                 boss.reset();
                 bossHealthBar.setActive(false);
                 bossDefeated = false;
+                dialogShown = false;
+                waitingForChoice = false;
+                playerChoseStop = false;
 
                 for (auto& obj : fallingObjects) {
                     obj->restart();
                 }
             }
         }
-
+        bossDialog.draw(window);
         window.display();
+
     }
 
     return 0;

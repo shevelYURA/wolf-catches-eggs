@@ -149,7 +149,7 @@ void Boss::reset()
 void Boss::updateColor()
 {
     // Изменяем цвет в зависимости от здоровья
-    float healthPercent = static_cast<float>(health) / 100.0f;
+    float healthPercent = static_cast<float>(health) / 1000.0f;
 
     if (healthPercent > 0.6f) {
         body.setFillColor(Color(150, 50, 150));

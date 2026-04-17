@@ -3,129 +3,248 @@
 #include <windows.h>
 #include <map>
 #include <vector>
-#include <iostream>
+#include <filesystem>
 #include "resource.h"
+
+using namespace sf;
+using namespace std;
 
 class ResourceManager {
 private:
-    static void logError(const std::string& message) {
-#ifdef _DEBUG
-        MessageBoxA(NULL, message.c_str(), "Resource Error", MB_OK | MB_ICONERROR);
-#endif
-        std::cerr << "ERROR: " << message << std::endl;
-    }
-
-    static sf::Texture& getFallbackTexture() {
-        static sf::Texture fallback;
+    static Texture& getFallbackTexture() {
+        static Texture fallback;
         static bool initialized = false;
         if (!initialized) {
-            // SFML 3: Image создаётся через конструктор с размерами
-            sf::Image img(sf::Vector2u(32, 32), sf::Color::Magenta);
+            Image img(Vector2u(64, 64), Color::Magenta);
 
-            // Добавим чёрный крест для заметности (SFML 3 синтаксис)
-            for (unsigned int i = 0; i < 32; i++) {
-                img.setPixel(sf::Vector2u(i, i), sf::Color::Black);
-                img.setPixel(sf::Vector2u(i, 31 - i), sf::Color::Black);
+            for (unsigned int i = 0; i < 64; i++) {
+                img.setPixel(Vector2u(i, i), Color::Black);
+                img.setPixel(Vector2u(i, 63 - i), Color::Black);
+            }
+
+            for (unsigned int i = 0; i < 64; i++) {
+                img.setPixel(Vector2u(i, 0), Color::White);
+                img.setPixel(Vector2u(i, 63), Color::White);
+                img.setPixel(Vector2u(0, i), Color::White);
+                img.setPixel(Vector2u(63, i), Color::White);
             }
 
             if (!fallback.loadFromImage(img)) {
-                logError("Failed to create fallback texture");
+                Image simpleImg(Vector2u(64, 64), Color::Magenta);
+                bool backupResult = fallback.loadFromImage(simpleImg);
             }
             initialized = true;
         }
         return fallback;
     }
 
-    static sf::Font& getFallbackFont() {
-        static sf::Font fallback;
+    static Font& getFallbackFont() {
+        static Font fallback;
         static bool initialized = false;
         if (!initialized) {
-            if (!fallback.openFromFile("C:/Windows/Fonts/arial.ttf")) {
-                logError("Failed to load fallback font! Text may not be visible.");
+            vector<string> fontPaths = {
+                "C:/Windows/Fonts/arial.ttf",
+                "C:/Windows/Fonts/segoeui.ttf",
+                "C:/Windows/Fonts/calibri.ttf",
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                "/System/Library/Fonts/Helvetica.ttc"
+            };
+
+            bool loaded = false;
+            for (const auto& path : fontPaths) {
+                if (filesystem::exists(path)) {
+                    if (fallback.openFromFile(path)) {
+                        loaded = true;
+                        break;
+                    }
+                }
             }
+
             initialized = true;
         }
         return fallback;
+    }
+
+    static string getResourceFileName(int resourceId) {
+        static map<int, string> fileNames = {
+            {IDB_PNG1, "wolf.png"},
+            {IDB_PNG2, "basket.png"},
+            {IDB_PNG3, "bomb.png"},
+            {IDB_PNG4, "boss.png"},
+            {IDB_PNG5, "egg.png"},
+            {IDB_PNG6, "icon.png"}
+        };
+
+        auto it = fileNames.find(resourceId);
+        if (it != fileNames.end()) {
+            return it->second;
+        }
+        return "resource_" + to_string(resourceId) + ".png";
+    }
+
+    static bool tryLoadFromFile(Texture& texture, const string& filename) {
+        vector<string> searchPaths = {
+            filename,
+            "assets/" + filename,
+            "../assets/" + filename,
+            "../../assets/" + filename,
+            "resources/" + filename,
+            "../resources/" + filename
+        };
+
+        for (const auto& path : searchPaths) {
+            if (filesystem::exists(path)) {
+                if (texture.loadFromFile(path)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    static bool tryLoadFromResource(Texture& texture, int resourceId) {
+        HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(resourceId), L"PNG");
+        if (!hRes) {
+            hRes = FindResource(NULL, MAKEINTRESOURCE(resourceId), RT_RCDATA);
+        }
+        if (!hRes) {
+            return false;
+        }
+
+        HGLOBAL hData = LoadResource(NULL, hRes);
+        if (!hData) {
+            return false;
+        }
+
+        void* pData = LockResource(hData);
+        DWORD size = SizeofResource(NULL, hRes);
+
+        if (!pData || size == 0) {
+            return false;
+        }
+
+        return texture.loadFromMemory(pData, size);
+    }
+
+    static bool tryLoadFontFromResource(Font& font) {
+        HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(FONT_ARCADE), RT_FONT);
+        if (!hRes) {
+            hRes = FindResource(NULL, MAKEINTRESOURCE(FONT_ARCADE), L"RCDATA");
+        }
+        if (!hRes) {
+            hRes = FindResource(NULL, L"FONT_ARCADE", RT_FONT);
+        }
+        if (!hRes) {
+            return false;
+        }
+
+        HGLOBAL hData = LoadResource(NULL, hRes);
+        if (!hData) {
+            return false;
+        }
+
+        void* pData = LockResource(hData);
+        DWORD size = SizeofResource(NULL, hRes);
+
+        if (!pData || size == 0) {
+            return false;
+        }
+
+        return font.openFromMemory(pData, size);
+    }
+
+    static bool tryLoadFontFromFile(Font& font, const string& filename) {
+        vector<string> searchPaths = {
+            filename,
+            "assets/" + filename,
+            "../assets/" + filename,
+            "../../assets/" + filename,
+            "resources/" + filename,
+            "../resources/" + filename,
+            "assets/fonts/" + filename,
+            "../assets/fonts/" + filename
+        };
+
+        for (const auto& path : searchPaths) {
+            if (filesystem::exists(path)) {
+                if (font.openFromFile(path)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 public:
-    static sf::Texture& getTexture(int resourceId) {
-        static std::map<int, sf::Texture> textures;
+    static Texture& getTexture(int resourceId) {
+        static map<int, Texture> textures;
 
         if (textures.find(resourceId) == textures.end()) {
-            HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(resourceId), L"PNG");
-            if (!hRes) {
-                logError("Texture resource not found for ID: " + std::to_string(resourceId));
-                textures[resourceId] = getFallbackTexture();
-                return textures[resourceId];
+            Texture texture;
+            bool loaded = false;
+            string fileName = getResourceFileName(resourceId);
+
+            if (tryLoadFromResource(texture, resourceId)) {
+                loaded = true;
             }
 
-            HGLOBAL hData = LoadResource(NULL, hRes);
-            if (!hData) {
-                logError("Failed to load texture data for ID: " + std::to_string(resourceId));
-                textures[resourceId] = getFallbackTexture();
-                return textures[resourceId];
+            if (!loaded) {
+                if (tryLoadFromFile(texture, fileName)) {
+                    loaded = true;
+                }
             }
 
-            void* pData = LockResource(hData);
-            DWORD size = SizeofResource(NULL, hRes);
-
-            if (!pData || size == 0) {
-                logError("Invalid texture data for ID: " + std::to_string(resourceId));
+            if (!loaded) {
                 textures[resourceId] = getFallbackTexture();
-                return textures[resourceId];
             }
-
-            if (!textures[resourceId].loadFromMemory(pData, size)) {
-                logError("Failed to load texture from memory for ID: " + std::to_string(resourceId));
-                textures[resourceId] = getFallbackTexture();
+            else {
+                textures[resourceId] = move(texture);
             }
         }
         return textures[resourceId];
     }
 
-    static sf::Font& getFont(int /*resourceId*/) {
-        static sf::Font font;
+    static Font& getFont(int /*resourceId*/) {
+        static Font font;
         static bool loaded = false;
-        static std::vector<char> fontData;
 
         if (!loaded) {
-            HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(FONT_ARCADE), RT_FONT);
-            if (!hRes) {
-                hRes = FindResource(NULL, MAKEINTRESOURCE(FONT_ARCADE), L"RCDATA");
-            }
-            if (!hRes) {
-                hRes = FindResource(NULL, L"FONT_ARCADE", RT_FONT);
+            if (tryLoadFontFromResource(font)) {
+                loaded = true;
             }
 
-            if (!hRes) {
-                logError("Font resource not found for ID: " + std::to_string(FONT_ARCADE));
-                return getFallbackFont();
+            if (!loaded) {
+                vector<string> fontNames = {
+                    "arcade.ttf",
+                    "Arcade.ttf",
+                    "ARCADE.TTF",
+                    "arcade_classic.ttf",
+                    "ARCADECLASSIC.TTF"
+                };
+
+                for (const auto& fontName : fontNames) {
+                    if (tryLoadFontFromFile(font, fontName)) {
+                        loaded = true;
+                        break;
+                    }
+                }
             }
 
-            HGLOBAL hData = LoadResource(NULL, hRes);
-            if (!hData) {
-                logError("Failed to load font data");
-                return getFallbackFont();
+            if (!loaded) {
+                font = getFallbackFont();
             }
-
-            void* pData = LockResource(hData);
-            DWORD size = SizeofResource(NULL, hRes);
-
-            if (!pData || size == 0) {
-                logError("Invalid font data");
-                return getFallbackFont();
-            }
-
-            fontData.assign((char*)pData, (char*)pData + size);
-
-            if (!font.openFromMemory(fontData.data(), fontData.size())) {
-                logError("Failed to load font from memory");
-                return getFallbackFont();
-            }
-
-            loaded = true;
         }
         return font;
+    }
+
+    static void preloadAllTextures() {
+        vector<int> textureIds = {
+            IDB_PNG1, IDB_PNG2, IDB_PNG3,
+            IDB_PNG4, IDB_PNG5, IDB_PNG6
+        };
+
+        for (int id : textureIds) {
+            getTexture(id);
+        }
     }
 };
