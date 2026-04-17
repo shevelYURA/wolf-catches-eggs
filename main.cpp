@@ -47,9 +47,14 @@ int main()
     Player player;
     std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
-    for (int i = 0; i < count_eggs; ++i) {
-        fallingObjects.push_back(std::make_unique<Egg>());
+   for (int i = 0; i < count_eggs; ++i) {
+    auto egg = std::make_unique<Egg>();  // 20% шанс сделать яйцо золотым
+    if (rand() % 100 < 20) {
+        egg->setGolden(true);
     }
+    
+    fallingObjects.push_back(std::move(egg));
+}
     Scorer scoreCounter;
     HealthBar healthBar;
     Boss boss;
@@ -81,18 +86,15 @@ int main()
         for (auto& obj : fallingObjects) {
             obj->move(time);
             if (obj->collision(player.getBasketBounds())) {
-                if (dynamic_cast<Egg*>(obj.get())) {
-                    // 20% шанс, что яйцо золотое
-                    bool isGolden = (rand() % 100 < 20);
+              if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
+    obj->restart();
     
-                    obj->restart();
-    
-                    if (isGolden) {
-                        scoreCounter.addScore(2500);  // Золотое яйцо: x5 (25000)
-                    } else {
-                        scoreCounter.addScore(500);   // Обычное яйцо: 5000 очков
-                    }
-                }
+    if (egg->getGolden()) {
+        scoreCounter.addScore(25000);  // Золотое яйцо: 25000 очков
+    } else {
+        scoreCounter.addScore(5000);   // Обычное яйцо: 5000 очков
+    }
+}
             }
         }
 
