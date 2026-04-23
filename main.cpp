@@ -11,8 +11,6 @@
 #include <cstdlib>
 #include <vector>
 #include <memory>
-#include "ResourceManager.h"
-#include "dialog.h"
 
 using namespace sf;
 
@@ -25,49 +23,30 @@ int main()
     RenderWindow window(VideoMode({ 1920, 1080 }), "Wolf Catches Eggs");
     window.setFramerateLimit(144);
 
-    // Загрузка иконки
-    HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDB_PNG6), L"PNG");
-    if (hRes) {
-        HGLOBAL hData = LoadResource(NULL, hRes);
-        if (hData) {
-            void* pData = LockResource(hData);
-            DWORD size = SizeofResource(NULL, hRes);
-            if (pData && size > 0) {
-                Image icon;
-                if (icon.loadFromMemory(pData, size)) {
-                    window.setIcon(icon);
-                }
-            }
-        }
-    }
-
     //----------------------------------------------------------------------------------//
 
     Player player;
     std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
-    
-    // СОЗДАНИЕ ЯИЦ С 20% ШАНСОМ ЗОЛОТОГО
+
     for (int i = 0; i < count_eggs; ++i) {
         auto egg = std::make_unique<Egg>();
-        
-        // 20% шанс сделать яйцо золотым
         if (rand() % 100 < 20) {
             egg->setGolden(true);
         }
-        
         fallingObjects.push_back(std::move(egg));
     }
-    
+
     Scorer scoreCounter;
     HealthBar healthBar;
     Boss boss;
     BossHealthBar bossHealthBar;
     bool bossDefeated = false;
 
-    // БУСТ: Двойные очки
+    // ---------- БУСТ: ДВОЙНЫЕ ОЧКИ ----------
     bool doublePoints = false;
     float doublePointsTimer = 0.0f;
+    // ---------------------------------------
 
     Clock clock;
 
@@ -76,73 +55,41 @@ int main()
         float time = clock.getElapsedTime().asMicroseconds() / 600000.0f;
         clock.restart();
 
-        while (const std::optional event = window.pollEvent())
+        Event event;
+        while (window.pollEvent(event))
         {
-            if (event->is<Event::Closed>())
+            if (event.type == Event::Closed)
                 window.close();
 
             // Активация буста по клавише P
-            if (event->is<Event::KeyPressed>() && event->get<Event::KeyPressed>().code == Keyboard::Key::P) {
-                if (!doublePoints) {
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::P)
+            {
+                if (!doublePoints)
+                {
                     doublePoints = true;
                     doublePointsTimer = 5.0f;
                 }
             }
         }
 
-        // Диалог перед боссом
-        static Dialog bossDialog;
-        static bool dialogShown = false;
-        static bool waitingForChoice = false;
-        static bool playerChoseStop = false;
-
-        // Инициализация диалога (выполняется один раз)
-        static bool dialogInitialized = false;
-        if (!dialogInitialized) {
-            bossDialog.setCallbacks(
-                [&]() {
-                    // Выбрал STOP - рестарт игры
-                    playerChoseStop = true;
-                    waitingForChoice = false;
-                },
-                [&]() {
-                    // Выбрал CONTINUE - появляется босс
-                    boss.activate();
-                    bossHealthBar.setActive(true);
-                    waitingForChoice = false;
-                }
-            );
-            dialogInitialized = true;
-        }
-
-        if (scoreCounter.getScore() >= 5000 && !boss.isActive() && !bossDefeated && !dialogShown && !playerChoseStop) {
-            bossDialog.show();
-            dialogShown = true;
-            waitingForChoice = true;
-        }
-
-        if (bossDialog.isActive()) {
-            bossDialog.handleInput(window);
-        }
-
-        if (playerChoseStop) {
-            player.takeDamage(100); // Убиваем игрока для показа game over
-            playerChoseStop = false;
+        if (scoreCounter.getScore() >= 5000 && !boss.isActive() && !bossDefeated) {
+            boss.activate();
+            bossHealthBar.setActive(true);
         }
 
         if (player.isAlive()) {
             player.update(time, window);
         }
 
-        // ОБРАБОТКА СТОЛКНОВЕНИЙ С ЯЙЦАМИ
         for (auto& obj : fallingObjects) {
             obj->move(time);
             if (obj->collision(player.getBasketBounds())) {
                 if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
                     obj->restart();
-                    
+
                     int points = egg->getGolden() ? 1500 : 500;
 
+                    // БУСТ: удваиваем очки
                     if (doublePoints) {
                         points *= 2;
                     }
@@ -193,7 +140,7 @@ int main()
         // Таймер для двойных очков
         if (doublePoints) {
             doublePointsTimer -= time;
-            if (doublePointsTimer <= 0) {
+            if (doublePointsTimer <= 0.0f) {
                 doublePoints = false;
             }
         }
@@ -214,7 +161,10 @@ int main()
         }
 
         if (!player.isAlive()) {
-            Font& font = ResourceManager::getFont(0);
+            Font font;
+            if (!font.openFromFile("image/ARCADECLASSIC.ttf")) {
+                // если шрифт не загрузился — можно пропустить или использовать стандартный
+            }
             Text gameOverText(font);
             gameOverText.setString("GAME OVER! Press R to restart");
             gameOverText.setCharacterSize(72);
@@ -234,18 +184,16 @@ int main()
                 boss.reset();
                 bossHealthBar.setActive(false);
                 bossDefeated = false;
-                dialogShown = false;
-                waitingForChoice = false;
-                playerChoseStop = false;
+                doublePoints = false;
+                doublePointsTimer = 0.0f;
 
                 for (auto& obj : fallingObjects) {
                     obj->restart();
                 }
             }
         }
-        bossDialog.draw(window);
-        window.display();
 
+        window.display();
     }
 
     return 0;
