@@ -55,7 +55,8 @@ int main()
     Player player;
     std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
-
+    
+    // СОЗДАНИЕ ЯИЦ С 20% ШАНСОМ ЗОЛОТОГО
     for (int i = 0; i < count_eggs; ++i) {
         auto egg = std::make_unique<Egg>();
         if (rand() % 100 < 20) {
@@ -69,6 +70,10 @@ int main()
     Boss boss;
     BossHealthBar bossHealthBar;
     bool bossDefeated = false;
+
+    // БУСТ: ДВОЙНЫЕ ОЧКИ
+    bool doublePoints = false;
+    float doublePointsTimer = 0.0f;
 
     Clock clock;
     Font& font = ResourceManager::getFont(0);
@@ -93,7 +98,6 @@ int main()
     {
         float time = clock.getElapsedTime().asMicroseconds() / 600000.0f;
         clock.restart();
-
         if (waitingForName) {
             while (const std::optional event = window.pollEvent())
             {
@@ -128,9 +132,24 @@ int main()
         bestText.setString("BEST: " + std::to_string(nameManager.getPersonalBest()));
 
         while (const std::optional event = window.pollEvent())
+        while (const std::optional event = window.pollEvent())
         {
             if (event->is<Event::Closed>())
                 window.close();
+
+            // ---------- Активация буста по клавише P ----------
+            if (const auto* keyPressed = event->getIf<Event::KeyPressed>())
+            {
+                if (keyPressed->code == Keyboard::Key::P)
+                {
+                    if (!doublePoints)
+                    {
+                        doublePoints = true;
+                        doublePointsTimer = 5.0f;
+                    }
+                }
+            }
+            // -----------------------------------------------------------------
         }
 
         static Dialog bossDialog;
@@ -177,13 +196,15 @@ int main()
             obj->move(time);
             if (obj->collision(player.getBasketBounds())) {
                 if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
-                    obj->restart();
-                    if (egg->getGolden()) {
-                        scoreCounter.addScore(1500);
+                    
+                    int points = egg->getGolden() ? 1500 : 500;
+
+                    if (doublePoints) {
+                        points *= 2;
+                        scoreCounter.addScore(500);   // Обычное: 500 очков
                     }
-                    else {
-                        scoreCounter.addScore(500);
-                    }
+
+                    scoreCounter.addScore(points);
                 }
             }
         }
@@ -223,6 +244,14 @@ int main()
                         break;
                     }
                 }
+            }
+        }
+
+        // Таймер для двойных очков
+        if (doublePoints) {
+            doublePointsTimer -= time;
+            if (doublePointsTimer <= 0.0f) {
+                doublePoints = false;
             }
         }
 
@@ -270,8 +299,10 @@ int main()
                 bossDefeated = false;
                 dialogShown = false;
                 waitingForChoice = false;
-                playerChoseStop = false;
+                doublePoints = false;
+                doublePointsTimer = 0.0f;
                 scoreSaved = false;
+                playerChoseStop = false;
 
                 for (auto& obj : fallingObjects) {
                     obj->restart();
