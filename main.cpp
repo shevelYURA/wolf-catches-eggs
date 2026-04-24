@@ -47,15 +47,11 @@ int main()
     std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
     
-    // СОЗДАНИЕ ЯИЦ С 20% ШАНСОМ ЗОЛОТОГО
     for (int i = 0; i < count_eggs; ++i) {
         auto egg = std::make_unique<Egg>();
-        
-        // 20% шанс сделать яйцо золотым
         if (rand() % 100 < 20) {
             egg->setGolden(true);
         }
-        
         fallingObjects.push_back(std::move(egg));
     }
     
@@ -65,10 +61,9 @@ int main()
     BossHealthBar bossHealthBar;
     bool bossDefeated = false;
 
-    // ========== БУСТ: ДВОЙНЫЕ ОЧКИ ==========
+    // БУСТ: ДВОЙНЫЕ ОЧКИ
     bool doublePoints = false;
     float doublePointsTimer = 0.0f;
-    // ========================================
 
     Clock clock;
 
@@ -77,21 +72,24 @@ int main()
         float time = clock.getElapsedTime().asMicroseconds() / 600000.0f;
         clock.restart();
 
-        while (const std::optional event = window.pollEvent())
+        while (const std::optional<Event> event = window.pollEvent())
         {
             if (event->is<Event::Closed>())
                 window.close();
 
             // ---------- Активация буста по клавише P ----------
-            if (event->is<Event::KeyPressed>()) {
-                if (event->get<Event::KeyPressed>().code == Keyboard::Key::P) {
-                    if (!doublePoints) {
+            if (const auto* keyPressed = event->getIf<Event::KeyPressed>())
+            {
+                if (keyPressed->code == Keyboard::Key::P)
+                {
+                    if (!doublePoints)
+                    {
                         doublePoints = true;
                         doublePointsTimer = 5.0f;
                     }
                 }
             }
-            // ---------------------------------------------------
+            // -----------------------------------------------------------------
         }
 
         // Диалог перед боссом
@@ -100,17 +98,14 @@ int main()
         static bool waitingForChoice = false;
         static bool playerChoseStop = false;
 
-        // Инициализация диалога (выполняется один раз)
         static bool dialogInitialized = false;
         if (!dialogInitialized) {
             bossDialog.setCallbacks(
                 [&]() {
-                    // Выбрал STOP - рестарт игры
                     playerChoseStop = true;
                     waitingForChoice = false;
                 },
                 [&]() {
-                    // Выбрал CONTINUE - появляется босс
                     boss.activate();
                     bossHealthBar.setActive(true);
                     waitingForChoice = false;
@@ -130,7 +125,7 @@ int main()
         }
 
         if (playerChoseStop) {
-            player.takeDamage(100); // Убиваем игрока для показа game over
+            player.takeDamage(100);
             playerChoseStop = false;
         }
 
@@ -138,7 +133,6 @@ int main()
             player.update(time, window);
         }
 
-        // ОБРАБОТКА СТОЛКНОВЕНИЙ С ЯЙЦАМИ
         for (auto& obj : fallingObjects) {
             obj->move(time);
             if (obj->collision(player.getBasketBounds())) {
@@ -147,11 +141,9 @@ int main()
                     
                     int points = egg->getGolden() ? 1500 : 500;
 
-                    // ---------- ПРИМЕНЕНИЕ БУСТА ----------
                     if (doublePoints) {
                         points *= 2;
                     }
-                    // --------------------------------------
 
                     scoreCounter.addScore(points);
                 }
@@ -253,7 +245,6 @@ int main()
         }
         bossDialog.draw(window);
         window.display();
-
     }
 
     return 0;
