@@ -197,7 +197,7 @@ int main()
 
         // ← ДОБАВЛЕНО (отрисовка яиц из буста)
         for (auto* egg : boostEggs) {
-            window.draw(egg->shape);
+            egg->draw(window);
         }
 
         scoreCounter.draw(window);
