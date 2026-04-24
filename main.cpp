@@ -23,12 +23,17 @@ int main()
     RenderWindow window(VideoMode({ 1920, 1080 }), "Wolf Catches Eggs");
     window.setFramerateLimit(144);
 
+    Image icon;
+    if (!icon.loadFromFile("image/icon.png")) {
+        return 1;
+    }
+    window.setIcon(icon);
+
     //----------------------------------------------------------------------------------//
 
     Player player;
     std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
-
     for (int i = 0; i < count_eggs; ++i) {
         auto egg = std::make_unique<Egg>();
         if (rand() % 100 < 20) {
@@ -36,9 +41,9 @@ int main()
         }
         fallingObjects.push_back(std::move(egg));
     }
-
     Scorer scoreCounter;
     HealthBar healthBar;
+
     Boss boss;
     BossHealthBar bossHealthBar;
     bool bossDefeated = false;
@@ -87,9 +92,8 @@ int main()
                 if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
                     obj->restart();
 
-                    int points = egg->getGolden() ? 1500 : 500;
+                    int points = egg->getGolden() ? 25000 : 5000;
 
-                    // БУСТ: удваиваем очки
                     if (doublePoints) {
                         points *= 2;
                     }
@@ -105,7 +109,7 @@ int main()
 
             for (auto& bullet : boss.getAttackSystem().getBullets()) {
                 if (bullet->checkPlayerCollision(player.getBounds())) {
-                    player.takeDamage(25);
+                    player.takeDamage(20);
                 }
             }
 
@@ -117,7 +121,7 @@ int main()
                     if (!boss.isAlive()) {
                         boss.reset();
                         bossHealthBar.setActive(false);
-                        scoreCounter.addScore(50000);
+                        scoreCounter.addScore(5000);
                         bossDefeated = true;
                     }
                 }
@@ -162,33 +166,32 @@ int main()
 
         if (!player.isAlive()) {
             Font font;
-            if (!font.openFromFile("image/ARCADECLASSIC.ttf")) {
-                // если шрифт не загрузился — можно пропустить или использовать стандартный
-            }
-            Text gameOverText(font);
-            gameOverText.setString("GAME OVER! Press R to restart");
-            gameOverText.setCharacterSize(72);
-            gameOverText.setFillColor(Color::Red);
-            gameOverText.setOutlineColor(Color::Black);
-            gameOverText.setOutlineThickness(3);
+            if (font.openFromFile("image/ARCADECLASSIC.ttf")) {
+                Text gameOverText(font);
+                gameOverText.setString("GAME OVER! Press R to restart");
+                gameOverText.setCharacterSize(72);
+                gameOverText.setFillColor(Color::Red);
+                gameOverText.setOutlineColor(Color::Black);
+                gameOverText.setOutlineThickness(3);
 
-            FloatRect textBounds = gameOverText.getLocalBounds();
-            gameOverText.setOrigin(Vector2f(textBounds.size.x / 2, textBounds.size.y / 2));
-            gameOverText.setPosition(Vector2f(960, 540));
+                FloatRect textBounds = gameOverText.getLocalBounds();
+                gameOverText.setOrigin(Vector2f(textBounds.size.x / 2, textBounds.size.y / 2));
+                gameOverText.setPosition(Vector2f(960, 540));
 
-            window.draw(gameOverText);
+                window.draw(gameOverText);
 
-            if (Keyboard::isKeyPressed(Keyboard::Key::R)) {
-                player.reset();
-                scoreCounter.reset();
-                boss.reset();
-                bossHealthBar.setActive(false);
-                bossDefeated = false;
-                doublePoints = false;
-                doublePointsTimer = 0.0f;
+                if (Keyboard::isKeyPressed(Keyboard::Key::R)) {
+                    player.reset();
+                    scoreCounter.reset();
+                    boss.reset();
+                    bossHealthBar.setActive(false);
+                    bossDefeated = false;
+                    doublePoints = false;
+                    doublePointsTimer = 0.0f;
 
-                for (auto& obj : fallingObjects) {
-                    obj->restart();
+                    for (auto& obj : fallingObjects) {
+                        obj->restart();
+                    }
                 }
             }
         }
