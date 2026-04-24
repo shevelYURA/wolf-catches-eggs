@@ -6,17 +6,15 @@
 
 class EggFallBoost {
 private:
-    static bool isActive;
-    static float boostTimer;
-    static std::vector<Egg*> boostedEggs;
+    static inline bool isActive = false;
+    static inline float boostTimer = 0.f;
+    static inline std::vector<Egg*> boostedEggs;
 
 public:
     static void activate(float duration = 8.0f) {
         if (isActive) return;
-        
         isActive = true;
         boostTimer = duration;
-        
         createSnakeEggs();
     }
     
@@ -35,7 +33,6 @@ public:
             
             Egg* egg = new Egg();
             egg->setPosition(sf::Vector2f(x, y));
-            
             boostedEggs.push_back(egg);
         }
     }
@@ -52,7 +49,10 @@ public:
         for (auto it = boostedEggs.begin(); it != boostedEggs.end();) {
             Egg* egg = *it;
             float speed = 200.f;
-            egg->move(sf::Vector2f(0.f, speed * deltaTime));
+            
+            sf::Vector2f pos = egg->getPosition();
+            pos.y += speed * deltaTime;
+            egg->setPosition(pos);
             
             if (egg->getPosition().y > 1080) {
                 delete egg;
@@ -81,7 +81,3 @@ public:
         return isActive;
     }
 };
-
-bool EggFallBoost::isActive = false;
-float EggFallBoost::boostTimer = 0.f;
-std::vector<Egg*> EggFallBoost::boostedEggs;
