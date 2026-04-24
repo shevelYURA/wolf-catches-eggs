@@ -1,5 +1,6 @@
 #include "FallingObject.h"
 #include "ResourceManager.h"
+#include "EggFallBoost.h"
 
 FallingObject::FallingObject(int resourceId, const Vector2f& size) {
     texture = ResourceManager::getTexture(resourceId);
@@ -14,10 +15,19 @@ void FallingObject::init(int resourceId, const Vector2f& size) {
 
     shape.setSize(size);
     shape.setTexture(&texture);
-    shape.setFillColor(sf::Color::White);  // обычный цвет по умолчанию
+    shape.setFillColor(sf::Color::White); 
     speed = 70.0f;
 }
 void FallingObject::move(float time) {
+
+    if (EggFallBoost::isBoostActive()) {
+        shape.move({ 0.0f, speed * time * 1.5f });
+        if (shape.getPosition().y > 1080) {
+            restart();
+        }
+        return;
+    }
+
     switch (currentState) {
     case waiting:
         waitTimer += time;
