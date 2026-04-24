@@ -94,6 +94,13 @@ int main()
     bestText.setOutlineThickness(1);
     bestText.setPosition(Vector2f(250, 25));
 
+    Text boostText(font);
+    boostText.setCharacterSize(28);
+    boostText.setFillColor(Color(255, 215, 0)); // Золотой цвет
+    boostText.setOutlineColor(Color::Black);
+    boostText.setOutlineThickness(1);
+    boostText.setPosition(Vector2f(250, 55));
+
     while (window.isOpen())
     {
         float time = clock.getElapsedTime().asMicroseconds() / 600000.0f;
@@ -131,7 +138,6 @@ int main()
 
         bestText.setString("BEST: " + std::to_string(nameManager.getPersonalBest()));
 
-        while (const std::optional event = window.pollEvent())
         while (const std::optional event = window.pollEvent())
         {
             if (event->is<Event::Closed>())
@@ -201,10 +207,11 @@ int main()
 
                     if (doublePoints) {
                         points *= 2;
-                        scoreCounter.addScore(500);   // Обычное: 500 очков
+                        //scoreCounter.addScore(500);   // Обычное: 500 очков
                     }
 
                     scoreCounter.addScore(points);
+                    obj->restart();
                 }
             }
         }
@@ -248,11 +255,30 @@ int main()
         }
 
         // Таймер для двойных очков
+                // Таймер для двойных очков
         if (doublePoints) {
             doublePointsTimer -= time;
             if (doublePointsTimer <= 0.0f) {
                 doublePoints = false;
             }
+            // Обновление текста буста
+            std::string boostStr = "2X POINTS! " + std::to_string(static_cast<int>(doublePointsTimer)) + "s";
+            if (doublePointsTimer < 1.0f) {
+                // Мерцание в последнюю секунду
+                if (static_cast<int>(doublePointsTimer * 10) % 2 == 0) {
+                    boostText.setFillColor(Color::Red);
+                }
+                else {
+                    boostText.setFillColor(Color::Yellow);
+                }
+            }
+            else {
+                boostText.setFillColor(Color(255, 215, 0));
+            }
+            boostText.setString(boostStr);
+        }
+        else {
+            boostText.setString("");
         }
 
         healthBar.update(player.getHealth());
@@ -265,6 +291,7 @@ int main()
         scoreCounter.draw(window);
         healthBar.draw(window);
         window.draw(bestText);
+        window.draw(boostText);
 
         if (boss.isActive()) {
             boss.draw(window);
