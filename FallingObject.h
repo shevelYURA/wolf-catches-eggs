@@ -17,6 +17,7 @@ public:
     bool isFalling() const;
 
     void setColor(const sf::Color& color);
+    void setPosition(const sf::Vector2f& pos) { shape.setPosition(pos); }
 
 protected:
     RectangleShape shape;
