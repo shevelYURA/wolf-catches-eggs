@@ -10,7 +10,7 @@ Player::Player() : health(100), attackKeyPressed(false)
     wolf.setTexture(&texWolf);
     wolf.setPosition(Vector2f(910, 920));
 
-    basket.setSize(Vector2f(50, 15));
+    basket.setSize(Vector2f(150, 15));
     basket.setTexture(&texBasket);
 }
 
@@ -29,14 +29,14 @@ void Player::update(float time, const RenderWindow& window)
     wolf.move(moveRec);
 
     Vector2f pos = wolf.getPosition();
-    if (pos.x > 1920 - 50) {
-        wolf.setPosition(Vector2f(1920 - 50, pos.y));
+    if (pos.x > 1920 - 150) {
+        wolf.setPosition(Vector2f(1920 - 150, pos.y));
     }
     if (pos.x < 0) {
         wolf.setPosition(Vector2f(0, pos.y));
     }
 
-    basket.setPosition(Vector2f(wolf.getPosition().x, wolf.getPosition().y + 15 * 8));
+    basket.setPosition(Vector2f(wolf.getPosition().x, wolf.getPosition().y + 15 * 6));
 
     handleAttack(window);
 
