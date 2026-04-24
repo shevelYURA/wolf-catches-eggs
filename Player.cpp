@@ -29,7 +29,7 @@ void Player::update(float time, const RenderWindow& window)
     wolf.move(moveRec);
 
     Vector2f pos = wolf.getPosition();
-    if (pos.x > 1920 - 50) {
+    if (pos.x > 1920 - 150) {
         wolf.setPosition(Vector2f(1920 - 150, pos.y));
     }
     if (pos.x < 0) {
