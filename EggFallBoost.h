@@ -52,9 +52,9 @@ public:
         for (auto it = boostedEggs.begin(); it != boostedEggs.end();) {
             Egg* egg = *it;
             float speed = 200.f;
-            egg->shape.move(0.f, speed * deltaTime);
+            egg->move(sf::Vector2f(0.f, speed * deltaTime));
             
-            if (egg->shape.getPosition().y > 1080) {
+            if (egg->getPosition().y > 1080) {
                 delete egg;
                 it = boostedEggs.erase(it);
             } else {
@@ -81,3 +81,7 @@ public:
         return isActive;
     }
 };
+
+bool EggFallBoost::isActive = false;
+float EggFallBoost::boostTimer = 0.f;
+std::vector<Egg*> EggFallBoost::boostedEggs;
