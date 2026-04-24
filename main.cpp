@@ -13,7 +13,9 @@
 #include <memory>
 #include "ResourceManager.h"
 #include "dialog.h"
-#include "EggFallBoost.h"  // ← ДОБАВЛЕНО
+#include "EggFallBoost.h"
+#include "FirebaseManager.h"
+#include "PlayerNameManager.h"
 
 using namespace sf;
 
@@ -21,12 +23,9 @@ int main()
 {
     srand(static_cast<unsigned int>(time(nullptr)));
 
-    //----------------------------------------------------------------------------------//
-
     RenderWindow window(VideoMode({ 1920, 1080 }), "Wolf Catches Eggs");
     window.setFramerateLimit(144);
 
-    // Загрузка иконки
     HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDB_PNG6), L"PNG");
     if (hRes) {
         HGLOBAL hData = LoadResource(NULL, hRes);
@@ -42,24 +41,30 @@ int main()
         }
     }
 
-    //----------------------------------------------------------------------------------//
+    PlayerNameManager nameManager;
+    std::string playerName = nameManager.getName();
+    bool waitingForName = false;
+    std::string inputName = "";
+
+    if (playerName == "WolfPlayer") {
+        waitingForName = true;
+    }
+
+    FirebaseManager firebase;
+    bool scoreSaved = false;
 
     Player player;
     std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
-    
-    // СОЗДАНИЕ ЯИЦ С 20% ШАНСОМ ЗОЛОТОГО
+
     for (int i = 0; i < count_eggs; ++i) {
         auto egg = std::make_unique<Egg>();
-        
-        // 20% шанс сделать яйцо золотым
         if (rand() % 100 < 20) {
             egg->setGolden(true);
         }
-        
         fallingObjects.push_back(std::move(egg));
     }
-    
+
     Scorer scoreCounter;
     HealthBar healthBar;
     Boss boss;
@@ -67,16 +72,66 @@ int main()
     bool bossDefeated = false;
 
     Clock clock;
+    Font& font = ResourceManager::getFont(0);
 
-    std::vector<Egg*> boostEggs;  // ← ДОБАВЛЕНО (для яиц из буста)
+    Text enterNameText(font);
+    enterNameText.setString("ENTER YOUR NAME: " + inputName + "_");
+    enterNameText.setCharacterSize(48);
+    enterNameText.setFillColor(Color::White);
+    enterNameText.setOutlineColor(Color::Black);
+    enterNameText.setOutlineThickness(2);
+    enterNameText.setPosition(Vector2f(960, 540));
+    enterNameText.setOrigin(Vector2f(enterNameText.getLocalBounds().size.x / 2, enterNameText.getLocalBounds().size.y / 2));
+
+    Text bestText(font);
+    bestText.setCharacterSize(28);
+    bestText.setFillColor(Color::Yellow);
+    bestText.setOutlineColor(Color::Black);
+    bestText.setOutlineThickness(1);
+    bestText.setPosition(Vector2f(250, 25));
+
+    std::vector<Egg*> boostEggs;
 
     while (window.isOpen())
     {
         float time = clock.getElapsedTime().asMicroseconds() / 600000.0f;
         clock.restart();
 
-        // ← ДОБАВЛЕНО (обновление буста)
+        // Обновление буста
         EggFallBoost::update(time, boostEggs);
+
+        if (waitingForName) {
+            while (const std::optional event = window.pollEvent())
+            {
+                if (event->is<Event::Closed>())
+                    window.close();
+
+                if (event->is<Event::TextEntered>()) {
+                    char c = static_cast<char>(event->getIf<Event::TextEntered>()->unicode);
+                    if (c == '\b' && !inputName.empty()) {
+                        inputName.pop_back();
+                    }
+                    else if (c == '\r' && !inputName.empty()) {
+                        playerName = inputName;
+                        nameManager.setName(playerName);
+                        waitingForName = false;
+                    }
+                    else if (isalnum(c) || c == ' ') {
+                        if (inputName.length() < 20) inputName += c;
+                    }
+                }
+            }
+
+            enterNameText.setString("ENTER YOUR NAME: " + inputName + "_");
+            enterNameText.setOrigin(Vector2f(enterNameText.getLocalBounds().size.x / 2, enterNameText.getLocalBounds().size.y / 2));
+
+            window.clear(Color(0, 0, 0, 255));
+            window.draw(enterNameText);
+            window.display();
+            continue;
+        }
+
+        bestText.setString("BEST: " + std::to_string(nameManager.getPersonalBest()));
 
         while (const std::optional event = window.pollEvent())
         {
@@ -84,23 +139,19 @@ int main()
                 window.close();
         }
 
-        // Диалог перед боссом
         static Dialog bossDialog;
         static bool dialogShown = false;
         static bool waitingForChoice = false;
         static bool playerChoseStop = false;
 
-        // Инициализация диалога (выполняется один раз)
         static bool dialogInitialized = false;
         if (!dialogInitialized) {
             bossDialog.setCallbacks(
                 [&]() {
-                    // Выбрал STOP - рестарт игры
                     playerChoseStop = true;
                     waitingForChoice = false;
                 },
                 [&]() {
-                    // Выбрал CONTINUE - появляется босс
                     boss.activate();
                     bossHealthBar.setActive(true);
                     waitingForChoice = false;
@@ -120,7 +171,7 @@ int main()
         }
 
         if (playerChoseStop) {
-            player.takeDamage(100); // Убиваем игрока для показа game over
+            player.takeDamage(100);
             playerChoseStop = false;
         }
 
@@ -128,23 +179,22 @@ int main()
             player.update(time, window);
         }
 
-        // ОБРАБОТКА СТОЛКНОВЕНИЙ С ЯЙЦАМИ
         for (auto& obj : fallingObjects) {
             obj->move(time);
             if (obj->collision(player.getBasketBounds())) {
                 if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
                     obj->restart();
-                    
                     if (egg->getGolden()) {
-                        scoreCounter.addScore(1500);  // Золотое: 1500 очков
-                    } else {
-                        scoreCounter.addScore(500);   // Обычное: 500 очков
+                        scoreCounter.addScore(1500);
+                    }
+                    else {
+                        scoreCounter.addScore(500);
                     }
                 }
             }
         }
 
-        // ← ДОБАВЛЕНО (временная активация буста по клавише B для теста)
+        // Временная активация буста по клавише B для теста
         if (Keyboard::isKeyPressed(Keyboard::Key::B)) {
             EggFallBoost::activate(8.0f);
         }
@@ -195,13 +245,14 @@ int main()
             obj->draw(window);
         }
 
-        // ← ДОБАВЛЕНО (отрисовка яиц из буста)
+        // Отрисовка яиц из буста
         for (auto* egg : boostEggs) {
             egg->draw(window);
         }
 
         scoreCounter.draw(window);
         healthBar.draw(window);
+        window.draw(bestText);
 
         if (boss.isActive()) {
             boss.draw(window);
@@ -209,7 +260,12 @@ int main()
         }
 
         if (!player.isAlive()) {
-            Font& font = ResourceManager::getFont(0);
+            if (!scoreSaved) {
+                firebase.saveScore(playerName, scoreCounter.getScore());
+                nameManager.updatePersonalBest(scoreCounter.getScore());
+                scoreSaved = true;
+            }
+
             Text gameOverText(font);
             gameOverText.setString("GAME OVER! Press R to restart");
             gameOverText.setCharacterSize(72);
@@ -232,12 +288,13 @@ int main()
                 dialogShown = false;
                 waitingForChoice = false;
                 playerChoseStop = false;
+                scoreSaved = false;
 
                 for (auto& obj : fallingObjects) {
                     obj->restart();
                 }
 
-                // ← ДОБАВЛЕНО (очистка яиц буста при рестарте)
+                // Очистка яиц буста при рестарте
                 for (auto* egg : boostEggs) {
                     delete egg;
                 }
@@ -246,7 +303,6 @@ int main()
         }
         bossDialog.draw(window);
         window.display();
-
     }
 
     return 0;
