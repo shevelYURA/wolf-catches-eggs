@@ -18,6 +18,8 @@ public:
 
     void setColor(const sf::Color& color);
     void setPosition(const sf::Vector2f& pos) { shape.setPosition(pos); }
+sf::Vector2f getPosition() const { return shape.getPosition(); }
+void move(const sf::Vector2f& offset) { shape.move(offset); }
 
 protected:
     RectangleShape shape;
