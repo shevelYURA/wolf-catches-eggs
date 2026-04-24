@@ -13,6 +13,7 @@
 #include <memory>
 #include "ResourceManager.h"
 #include "dialog.h"
+#include "EggFallBoost.h"  // ← ДОБАВЛЕНО
 
 using namespace sf;
 
@@ -67,10 +68,15 @@ int main()
 
     Clock clock;
 
+    std::vector<Egg*> boostEggs;  // ← ДОБАВЛЕНО (для яиц из буста)
+
     while (window.isOpen())
     {
         float time = clock.getElapsedTime().asMicroseconds() / 600000.0f;
         clock.restart();
+
+        // ← ДОБАВЛЕНО (обновление буста)
+        EggFallBoost::update(time, boostEggs);
 
         while (const std::optional event = window.pollEvent())
         {
@@ -138,6 +144,11 @@ int main()
             }
         }
 
+        // ← ДОБАВЛЕНО (временная активация буста по клавише B для теста)
+        if (Keyboard::isKeyPressed(Keyboard::Key::B)) {
+            EggFallBoost::activate(8.0f);
+        }
+
         if (boss.isActive()) {
             boss.update(time, window, player.getBottomCenter(), player.getBounds());
             bossHealthBar.update(boss.getHealth());
@@ -183,6 +194,12 @@ int main()
         for (auto& obj : fallingObjects) {
             obj->draw(window);
         }
+
+        // ← ДОБАВЛЕНО (отрисовка яиц из буста)
+        for (auto* egg : boostEggs) {
+            window.draw(egg->shape);
+        }
+
         scoreCounter.draw(window);
         healthBar.draw(window);
 
@@ -219,6 +236,12 @@ int main()
                 for (auto& obj : fallingObjects) {
                     obj->restart();
                 }
+
+                // ← ДОБАВЛЕНО (очистка яиц буста при рестарте)
+                for (auto* egg : boostEggs) {
+                    delete egg;
+                }
+                boostEggs.clear();
             }
         }
         bossDialog.draw(window);
