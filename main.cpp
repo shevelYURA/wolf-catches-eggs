@@ -90,7 +90,7 @@ int main()
     bestText.setOutlineThickness(1);
     bestText.setPosition(Vector2f(250, 25));
 
-    std::vector<Egg*> boostEggs;
+    
 
     while (window.isOpen())
     {
@@ -98,7 +98,7 @@ int main()
         clock.restart();
 
         // Обновление буста
-        EggFallBoost::update(time, boostEggs);
+        EggFallBoost::update(time);
 
         if (waitingForName) {
             while (const std::optional event = window.pollEvent())
@@ -245,10 +245,12 @@ int main()
             obj->draw(window);
         }
 
-        // Отрисовка яиц из буста
-        for (auto* egg : boostEggs) {
-            egg->draw(window);
-        }
+        // Отрисовка яиц из буста (только активные)
+for (int i = 0; i < (int)EggFallBoost::getEggs().size(); i++) {
+    if (EggFallBoost::isEggAlive(i)) {
+        EggFallBoost::getEggs()[i]->draw(window);
+    }
+}
 
         scoreCounter.draw(window);
         healthBar.draw(window);
@@ -279,27 +281,26 @@ int main()
 
             window.draw(gameOverText);
 
-            if (Keyboard::isKeyPressed(Keyboard::Key::R)) {
+           if (Keyboard::isKeyPressed(Keyboard::Key::R)) {
                 player.reset();
-                scoreCounter.reset();
-                boss.reset();
-                bossHealthBar.setActive(false);
-                bossDefeated = false;
-                dialogShown = false;
-                waitingForChoice = false;
-                playerChoseStop = false;
-                scoreSaved = false;
+    scoreCounter.reset();
+    boss.reset();
+    bossHealthBar.setActive(false);
+    bossDefeated = false;
+    dialogShown = false;
+    waitingForChoice = false;
+    playerChoseStop = false;
+    scoreSaved = false;
 
-                for (auto& obj : fallingObjects) {
-                    obj->restart();
-                }
+    for (auto& obj : fallingObjects) {
+        obj->restart();
+    }
 
-                // Очистка яиц буста при рестарте
-                for (auto* egg : boostEggs) {
-                    delete egg;
-                }
-                boostEggs.clear();
-            }
+    // Очистка яиц буста при рестарте
+    EggFallBoost::deactivate();
+}
+               
+   
         }
         bossDialog.draw(window);
         window.display();
