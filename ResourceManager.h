@@ -72,7 +72,8 @@ private:
             {IDB_PNG3, "bomb.png"},
             {IDB_PNG4, "boss.png"},
             {IDB_PNG5, "egg.png"},
-            {IDB_PNG6, "icon.png"}
+            {IDB_PNG6, "icon.png"},
+        {IDB_POWERUP, "powerup.png"}
         };
 
         auto it = fileNames.find(resourceId);
@@ -240,7 +241,8 @@ public:
     static void preloadAllTextures() {
         vector<int> textureIds = {
             IDB_PNG1, IDB_PNG2, IDB_PNG3,
-            IDB_PNG4, IDB_PNG5, IDB_PNG6
+            IDB_PNG4, IDB_PNG5, IDB_PNG6,
+        IDB_POWERUP
         };
 
         for (int id : textureIds) {
