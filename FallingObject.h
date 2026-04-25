@@ -15,9 +15,9 @@ public:
 
     FloatRect getBounds() const;
     bool isFalling() const;
-
     void setColor(const sf::Color& color);
- // НОВЫЕ МЕТОДЫ ДЛЯ БУСТА
+    
+    // НОВЫЕ МЕТОДЫ ДЛЯ БУСТА
     void setPosition(const Vector2f& pos) { shape.setPosition(pos); }
     Vector2f getPosition() const { return shape.getPosition(); }
     
@@ -25,6 +25,13 @@ public:
     void enableEggRainMode() { eggRainMode = true; waitTimer = waitTime; currentState = falling; }
     void disableEggRainMode() { eggRainMode = false; }
     bool isEggRainMode() const { return eggRainMode; }
+    
+    // ПРИНУДИТЕЛЬНОЕ ПАДЕНИЕ (для новых яиц)
+    void forceFall(const Vector2f& pos) {
+        shape.setPosition(pos);
+        currentState = falling;
+        eggRainMode = true;
+    }
 
 protected:
     RectangleShape shape;
@@ -39,5 +46,6 @@ protected:
     float speed;
     float waitTimer;
     float waitTime;
-bool eggRainMode = false;
+    
+    bool eggRainMode = false;
 };
