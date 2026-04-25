@@ -19,6 +19,17 @@ void FallingObject::init(int resourceId, const Vector2f& size) {
     speed = 70.0f;
 }
 void FallingObject::move(float time) {
+    // РЕЖИМ ЯЙЦЕПАДА - падают строго вниз без ожидания
+    if (eggRainMode) {
+        shape.move({0.0f, speed * time * 1.5f});
+        if (shape.getPosition().y > ScreenConfig::scaleY * 1200) {
+            // Не рестартим, а просто убираем с экрана (или рестартим)
+            shape.setPosition(Vector2f{-100, -100});
+        }
+        return;
+    }
+    
+    // ОБЫЧНЫЙ РЕЖИМ
     switch (currentState) {
     case waiting:
         waitTimer += time;
