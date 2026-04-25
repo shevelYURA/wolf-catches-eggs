@@ -21,4 +21,8 @@ public:
     bool getGolden() const {
         return isGolden;
     }
+// НОВЫЕ МЕТОДЫ ДЛЯ УПРАВЛЕНИЯ РЕЖИМОМ ЯЙЦЕПАДА
+    void enableRainMode() { enableEggRainMode(); }
+    void disableRainMode() { disableEggRainMode(); }
+    bool isInRainMode() const { return isEggRainMode(); }
 };
