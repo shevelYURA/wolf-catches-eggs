@@ -3,6 +3,7 @@
 #include <cmath>
 #include <algorithm>
 #include <functional>
+#include "screenConfig.h"
 
 BossAttack::BossAttack()
     : attackTimer(0), attackInterval(4.0f), isActive_(false),
@@ -83,7 +84,7 @@ void BossAttack::performLeftBombard(const Vector2f& bossPos)
 {
     float startY = 440;
     int bombCount = 20;
-    float safeZoneStart = 1400.0f;
+    float safeZoneStart = ScreenConfig::scaleX * 1400.0f;
     std::vector<float> xPositions;
     for (int i = 0; i < bombCount; i++) {
         float startX = (safeZoneStart / bombCount) * i;
@@ -107,8 +108,8 @@ void BossAttack::performRightBombard(const Vector2f& bossPos)
 {
     float startY = 440;
     int bombCount = 20;
-    float safeZoneEnd = 520.0f;
-    float rightEdge = 1920.0f;
+    float safeZoneEnd = ScreenConfig::scaleX * 520.0f;
+    float rightEdge = ScreenConfig::scaleX * 1920.0f;
     float range = rightEdge - safeZoneEnd;
 
     std::vector<float> xPositions;
@@ -135,7 +136,7 @@ void BossAttack::performRandomRain()
     int bombCount = 13;
 
     for (int i = 0; i < bombCount; i++) {
-        float startX = 100.0f + (rand() % 1720);
+        float startX = ScreenConfig::scaleX * 100.0f + (rand() % static_cast<int>(ScreenConfig::scaleX * 1720));
         float startY = -50.0f;
         auto bullet = std::make_unique<BossBullet>(
             BossBullet::Type::Vertical, Vector2f(startX, startY));

@@ -3,6 +3,7 @@
 #include "ResourceManager.h"
 #include <string>
 #include <functional>
+#include "screenConfig.h"
 
 using namespace sf;
 
@@ -40,37 +41,37 @@ public:
         stopText(font),
         continueText(font) {
         // Фон диалога
-        background.setSize(Vector2f(800, 300));
+        background.setSize(ScreenConfig::size(800, 300));
         background.setFillColor(Color(50, 50, 50, 230));
         background.setOutlineColor(Color::White);
         background.setOutlineThickness(3);
-        background.setOrigin(Vector2f(400, 150));
-        background.setPosition(Vector2f(960, 540));
+        background.setOrigin(ScreenConfig::size(400, 150));
+        background.setPosition(ScreenConfig::pos(960, 540));
 
         // Кнопка "Остановиться"
-        buttonStop.setSize(Vector2f(250, 60));
+        buttonStop.setSize(ScreenConfig::size(250, 60));
         buttonStop.setFillColor(Color(150, 50, 50));
         buttonStop.setOutlineColor(Color::White);
         buttonStop.setOutlineThickness(2);
-        buttonStop.setOrigin(Vector2f(125, 30));
-        buttonStop.setPosition(Vector2f(760, 620));
+        buttonStop.setOrigin(ScreenConfig::size(125, 30));
+        buttonStop.setPosition(ScreenConfig::pos(760, 620));
 
         // Кнопка "Продолжить"
-        buttonContinue.setSize(Vector2f(250, 60));
+        buttonContinue.setSize(ScreenConfig::size(250, 60));
         buttonContinue.setFillColor(Color(50, 100, 50));
         buttonContinue.setOutlineColor(Color::White);
         buttonContinue.setOutlineThickness(2);
-        buttonContinue.setOrigin(Vector2f(125, 30));
-        buttonContinue.setPosition(Vector2f(1160, 620));
+        buttonContinue.setOrigin(ScreenConfig::size(125, 30));
+        buttonContinue.setPosition(ScreenConfig::pos(1160, 620));
 
         // Текст сообщения
         messageText.setFont(font);
         messageText.setString("Boss Vegan says:\n\n\"Stop stealing eggs from chickens!\"");
-        messageText.setCharacterSize(32);
+        messageText.setCharacterSize(static_cast<unsigned int>(32 * ScreenConfig::scaleY));
         messageText.setFillColor(Color::White);
         messageText.setOutlineColor(Color::Black);
         messageText.setOutlineThickness(1);
-        messageText.setPosition(Vector2f(960, 480));
+        messageText.setPosition(ScreenConfig::pos(960, 480));
 
         // Текст кнопок
         stopText.setFont(font);
@@ -96,11 +97,11 @@ public:
 
         FloatRect stopBounds = stopText.getLocalBounds();
         stopText.setOrigin(Vector2f(stopBounds.size.x / 2, stopBounds.size.y / 2));
-        stopText.setPosition(Vector2f(760, 620));
+        stopText.setPosition(ScreenConfig::pos(760, 610));
 
         FloatRect contBounds = continueText.getLocalBounds();
         continueText.setOrigin(Vector2f(contBounds.size.x / 2, contBounds.size.y / 2));
-        continueText.setPosition(Vector2f(1160, 620));
+        continueText.setPosition(ScreenConfig::pos(1160, 610));
     }
 
     void show() {

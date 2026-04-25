@@ -1,5 +1,6 @@
 #include "BossHealthBar.h"
 #include "ResourceManager.h"
+#include "screenConfig.h"
 
 BossHealthBar::BossHealthBar() : healthText(nullptr), active(false)
 {
@@ -63,9 +64,8 @@ bool BossHealthBar::isActive() const
 
 void BossHealthBar::updatePosition()
 {
-    Vector2f position(660, 20);
-
+    Vector2f position = ScreenConfig::pos(660, 20);
     healthBarBackground.setPosition(position);
     healthBarForeground.setPosition(position);
-    healthText->setPosition(Vector2f(position.x, position.y + 50));
+    healthText->setPosition(ScreenConfig::pos(660, 70));
 }

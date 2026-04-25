@@ -1,16 +1,17 @@
 #include "Player.h"
 #include "ResourceManager.h"
+#include "ScreenConfig.h"
 
 Player::Player() : health(100), attackKeyPressed(false)
 {
     texWolf = ResourceManager::getTexture(IDB_PNG1);
     texBasket = ResourceManager::getTexture(IDB_PNG2);
 
-    wolf.setSize(Vector2f(150, 150));
+    wolf.setSize(ScreenConfig::size(150, 150));
     wolf.setTexture(&texWolf);
-    wolf.setPosition(Vector2f(910, 920));
+    wolf.setPosition(ScreenConfig::pos(910, 920));
 
-    basket.setSize(Vector2f(150, 15));
+    basket.setSize(ScreenConfig::size(150, 15));
     basket.setTexture(&texBasket);
 }
 
@@ -29,8 +30,8 @@ void Player::update(float time, const RenderWindow& window)
     wolf.move(moveRec);
 
     Vector2f pos = wolf.getPosition();
-    if (pos.x > 1920 - 150) {
-        wolf.setPosition(Vector2f(1920 - 150, pos.y));
+    if (pos.x > ScreenConfig::scaleX * 1920 - ScreenConfig::scaleX * 150) {
+        wolf.setPosition(Vector2f(ScreenConfig::scaleX * 1920 - ScreenConfig::scaleX * 150, pos.y));
     }
     if (pos.x < 0) {
         wolf.setPosition(Vector2f(0, pos.y));

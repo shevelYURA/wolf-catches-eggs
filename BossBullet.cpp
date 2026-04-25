@@ -2,6 +2,7 @@
 #include "ResourceManager.h"
 #include <cmath>
 #include <cstdlib>
+#include "screenConfig.h"
 
 BossBullet::BossBullet(Type type, const Vector2f& startPos, const Vector2f& targetPos, float individualDelay)
     : type(type), position(startPos), targetPosition(targetPos), active(true), speed(300.0f),
@@ -86,7 +87,9 @@ void BossBullet::update(float time, const Vector2f& playerPos)
         break;
     }
 
-    if (position.y > 1200 || position.y < -100 || position.x < -100 || position.x > 2020) {
+    if (position.y > ScreenConfig::scaleY * 1200 ||
+        position.x < ScreenConfig::scaleX * -100 ||
+        position.x > ScreenConfig::scaleX * 2020) {
         active = false;
     }
 

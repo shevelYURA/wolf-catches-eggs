@@ -2,15 +2,16 @@
 #include "ResourceManager.h"
 #include <cmath>
 #include <cstdlib>
+#include "screenConfig.h"
 
 Boss::Boss() : health(100), active(false), moveSpeed(150.0f), directionChangeTimer(0)
 {
     texBoss = ResourceManager::getTexture(IDB_PNG4);
     body.setTexture(&texBoss);
 
-    body.setSize(Vector2f(120, 120));
-    body.setOrigin(Vector2f(60, 60));
-    body.setPosition(Vector2f(960, 200));
+    body.setSize(ScreenConfig::size(120, 120));
+    body.setOrigin(ScreenConfig::size(60, 60));
+    body.setPosition(ScreenConfig::pos(960, 200));
 
     // Глаза
     eyeLeft.setRadius(10);
@@ -92,10 +93,10 @@ void Boss::checkBounds()
 {
     Vector2f pos = body.getPosition();
 
-    if (pos.x < 100) pos.x = 100;
-    if (pos.x > 1820) pos.x = 1820;
-    if (pos.y < 50) pos.y = 50;
-    if (pos.y > 800) pos.y = 800;
+    if (pos.x < ScreenConfig::scaleX * 100) pos.x = ScreenConfig::scaleX * 100;
+    if (pos.x > ScreenConfig::scaleX * 1820) pos.x = ScreenConfig::scaleX * 1820;
+    if (pos.y < ScreenConfig::scaleY * 50) pos.y = ScreenConfig::scaleY * 50;
+    if (pos.y > ScreenConfig::scaleY * 800) pos.y = ScreenConfig::scaleY * 800;
 
     body.setPosition(pos);
 }
@@ -134,7 +135,7 @@ void Boss::activate()
 {
     active = true;
     health = 1000;
-    body.setPosition(Vector2f(960, 200));
+    body.setPosition(ScreenConfig::pos(960, 200));
     attackSystem.activate();
     updateColor();
 }

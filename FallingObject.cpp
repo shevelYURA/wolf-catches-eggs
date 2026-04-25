@@ -1,5 +1,6 @@
 #include "FallingObject.h"
 #include "ResourceManager.h"
+#include "ScreenConfig.h"
 
 FallingObject::FallingObject(int resourceId, const Vector2f& size) {
     texture = ResourceManager::getTexture(resourceId);
@@ -23,7 +24,7 @@ void FallingObject::move(float time) {
         waitTimer += time;
         if (waitTimer >= waitTime) {
             currentState = falling;
-            float x = static_cast<float>(rand() % 1820 + 50);
+            float x = static_cast<float>(rand() % static_cast<int>(ScreenConfig::scaleX * 1820) + static_cast<int>(ScreenConfig::scaleX * 50));
             shape.setPosition(Vector2f{ x, 0.0f });
         }
         break;
@@ -33,7 +34,7 @@ void FallingObject::move(float time) {
         break;
     }
 
-    if (shape.getPosition().y > 1080) {
+    if (shape.getPosition().y > ScreenConfig::scaleY * 1080) {
         restart();
     }
 }

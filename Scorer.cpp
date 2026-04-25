@@ -1,5 +1,6 @@
 #include "Scorer.h"
 #include "ResourceManager.h"
+#include "screenConfig.h"
 
 Scorer::Scorer() : score(0), scoreText(nullptr)
 {
@@ -12,7 +13,7 @@ Scorer::Scorer() : score(0), scoreText(nullptr)
     scoreText->setFillColor(Color::White);
     scoreText->setOutlineColor(Color::Black);
     scoreText->setOutlineThickness(2);
-    scoreText->setPosition(Vector2f(20, 20));
+    scoreText->setPosition(ScreenConfig::pos(20, 20));
 }
 
 Scorer::~Scorer()

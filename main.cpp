@@ -15,6 +15,7 @@
 #include "dialog.h"
 #include "FirebaseManager.h"
 #include "PlayerNameManager.h"
+#include "screenConfig.h"
 
 using namespace sf;
 
@@ -22,8 +23,17 @@ int main()
 {
     srand(static_cast<unsigned int>(time(nullptr)));
 
-    RenderWindow window(VideoMode({ 1920, 1080 }), "Wolf Catches Eggs");
+    VideoMode desktopMode = VideoMode::getDesktopMode();
+    unsigned int screenWidth = static_cast<unsigned int>(desktopMode.size.x * 0.95f);
+    unsigned int screenHeight = static_cast<unsigned int>(desktopMode.size.y * 0.9f);
+    ScreenConfig::init(screenWidth, screenHeight);
+
+    RenderWindow window(VideoMode({ screenWidth, screenHeight }), "Wolf Catches Eggs", Style::Default);
     window.setFramerateLimit(144);
+
+    int windowPosX = (desktopMode.size.x - screenWidth) / 2;
+    int windowPosY = (desktopMode.size.y - screenHeight) / 2;
+    window.setPosition(Vector2i(windowPosX, windowPosY));
 
     HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDB_PNG6), L"PNG");
     if (hRes) {
@@ -84,7 +94,7 @@ int main()
     enterNameText.setFillColor(Color::White);
     enterNameText.setOutlineColor(Color::Black);
     enterNameText.setOutlineThickness(2);
-    enterNameText.setPosition(Vector2f(960, 540));
+    enterNameText.setPosition(ScreenConfig::pos(960, 540));
     enterNameText.setOrigin(Vector2f(enterNameText.getLocalBounds().size.x / 2, enterNameText.getLocalBounds().size.y / 2));
 
     Text bestText(font);
@@ -92,14 +102,14 @@ int main()
     bestText.setFillColor(Color::Yellow);
     bestText.setOutlineColor(Color::Black);
     bestText.setOutlineThickness(1);
-    bestText.setPosition(Vector2f(250, 25));
+    bestText.setPosition(ScreenConfig::pos(250, 25));
 
     Text boostText(font);
     boostText.setCharacterSize(28);
     boostText.setFillColor(Color(255, 215, 0)); // Золотой цвет
     boostText.setOutlineColor(Color::Black);
     boostText.setOutlineThickness(1);
-    boostText.setPosition(Vector2f(250, 55));
+    boostText.setPosition(ScreenConfig::pos(250, 55));
 
     while (window.isOpen())
     {
@@ -314,7 +324,7 @@ int main()
 
             FloatRect textBounds = gameOverText.getLocalBounds();
             gameOverText.setOrigin(Vector2f(textBounds.size.x / 2, textBounds.size.y / 2));
-            gameOverText.setPosition(Vector2f(960, 540));
+            gameOverText.setPosition(ScreenConfig::pos(960, 540));
 
             window.draw(gameOverText);
 

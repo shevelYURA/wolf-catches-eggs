@@ -1,5 +1,6 @@
 #include "HealthBar.h"
 #include "ResourceManager.h"
+#include "ScreenConfig.h"
 
 HealthBar::HealthBar() : healthText(nullptr)
 {
@@ -62,9 +63,8 @@ void HealthBar::draw(RenderWindow& window)
 
 void HealthBar::updatePosition()
 {
-    Vector2f position(1500, 20);
-
+    Vector2f position = ScreenConfig::pos(1500, 20);
     healthBarBackground.setPosition(position);
     healthBarForeground.setPosition(position);
-    healthText->setPosition(Vector2f(position.x, position.y + 40));
+    healthText->setPosition(ScreenConfig::pos(1500, 60));
 }
