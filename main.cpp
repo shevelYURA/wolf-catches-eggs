@@ -66,8 +66,9 @@ int main()
     Player player;
     std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
+    int extraEggsCount = 0;  // Счётчик временных яиц
     
-    // СОЗДАНИЕ ЯИЦ С 20% ШАНСОМ ЗОЛОТОГО
+    // СОЗДАНИЕ ОСНОВНЫХ ЯИЦ С 20% ШАНСОМ ЗОЛОТОГО
     for (int i = 0; i < count_eggs; ++i) {
         auto egg = std::make_unique<Egg>();
         if (rand() % 100 < 20) {
@@ -113,12 +114,11 @@ int main()
 
     Text boostText(font);
     boostText.setCharacterSize(28);
-    boostText.setFillColor(Color(255, 215, 0)); // Золотой цвет
+    boostText.setFillColor(Color(255, 215, 0));
     boostText.setOutlineColor(Color::Black);
     boostText.setOutlineThickness(1);
     boostText.setPosition(ScreenConfig::pos(250, 55));
 
-    // Текст для отображения яйцепада
     Text eggRainText(font);
     eggRainText.setCharacterSize(48);
     eggRainText.setFillColor(Color(255, 100, 255));
@@ -169,7 +169,6 @@ int main()
             if (event->is<Event::Closed>())
                 window.close();
 
-            // ---------- Активация буста по клавише P ----------
             if (const auto* keyPressed = event->getIf<Event::KeyPressed>())
             {
                 if (keyPressed->code == Keyboard::Key::P)
@@ -181,7 +180,6 @@ int main()
                     }
                 }
             }
-            // -----------------------------------------------------------------
         }
 
         static Dialog bossDialog;
@@ -224,25 +222,47 @@ int main()
             player.update(time, window);
         }
 
-        // ОБНОВЛЕНИЕ БУСТОВ
         powerUpManager.update(time);
 
-        // ПРОВЕРКА СТОЛКНОВЕНИЙ С БУСТАМИ
+        // ПРОВЕРКА СТОЛКНОВЕНИЙ С БУСТАМИ И АКТИВАЦИЯ ЯЙЦЕПАДА
         for (auto& powerUp : powerUpManager.getPowerUps()) {
             if (powerUp->collision(player.getBasketBounds())) {
                 if (powerUp->getType() == PowerUpType::EggRain) {
-                    // Активируем яйцепад
-                    eggRainActive = true;
-                    eggRainTimer = EGG_RAIN_DURATION;
-                    
-                    // Включаем режим яйцепада для ВСЕХ яиц
-                    for (auto& obj : fallingObjects) {
-                        if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
-                            egg->enableRainMode();
+                    if (!eggRainActive) {
+                        eggRainActive = true;
+                        eggRainTimer = EGG_RAIN_DURATION;
+                        
+                        // Включаем режим для существующих яиц
+                        for (auto& obj : fallingObjects) {
+                            if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
+                                egg->enableRainMode();
+                            }
+                        }
+                        
+                        // СОЗДАЁМ 40 НОВЫХ ЯИЦ ДЛЯ ЯЙЦЕПАДА!
+                        int newEggsCount = 40;
+                        extraEggsCount = newEggsCount;
+                        
+                        for (int i = 0; i < newEggsCount; i++) {
+                            auto newEgg = std::make_unique<Egg>();
+                            
+                            // 20% шанс золотого яйца
+                            if (rand() % 100 < 20) {
+                                newEgg->setGolden(true);
+                            }
+                            
+                            // Распределяем по ширине экрана (змейкой)
+                            float x = ScreenConfig::scaleX * (100 + (rand() % 1720));
+                            float y = ScreenConfig::scaleY * (-50 - (i * 25));  // Ярусами
+                            
+                            // Заставляем яйцо падать в режиме яйцепада
+                            newEgg->forceRainFall(x, y);
+                            newEgg->enableRainMode();
+                            
+                            fallingObjects.push_back(std::move(newEgg));
                         }
                     }
                 }
-                // Удаляем подобранный буст
                 powerUp->restart();
                 break;
             }
@@ -253,31 +273,35 @@ int main()
             obj->move(time);
             if (obj->collision(player.getBasketBounds())) {
                 if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
-                    
                     int points = egg->getGolden() ? 1500 : 500;
-
                     if (doublePoints) {
                         points *= 2;
                     }
-
                     scoreCounter.addScore(points);
                     obj->restart();
                 }
             }
         }
 
-        // ТАЙМЕР ЯЙЦЕПАДА
+        // ТАЙМЕР ЯЙЦЕПАДА И УДАЛЕНИЕ ВРЕМЕННЫХ ЯИЦ
         if (eggRainActive) {
             eggRainTimer -= time;
             if (eggRainTimer <= 0.0f) {
                 eggRainActive = false;
-                // Выключаем режим яйцепада для всех яиц
+                
+                // Удаляем временные яйца (которые были добавлены при бусте)
+                while (fallingObjects.size() > static_cast<size_t>(count_eggs)) {
+                    fallingObjects.pop_back();
+                }
+                
+                // Выключаем режим для оставшихся основных яиц
                 for (auto& obj : fallingObjects) {
                     if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
                         egg->disableRainMode();
-                        egg->restart();  // Сбрасываем в нормальный режим
+                        egg->restart();
                     }
                 }
+                extraEggsCount = 0;
             }
         }
 
@@ -319,16 +343,13 @@ int main()
             }
         }
 
-        // Таймер для двойных очков
         if (doublePoints) {
             doublePointsTimer -= time;
             if (doublePointsTimer <= 0.0f) {
                 doublePoints = false;
             }
-            // Обновление текста буста
             std::string boostStr = "2X POINTS! " + std::to_string(static_cast<int>(doublePointsTimer)) + "s";
             if (doublePointsTimer < 1.0f) {
-                // Мерцание в последнюю секунду
                 if (static_cast<int>(doublePointsTimer * 10) % 2 == 0) {
                     boostText.setFillColor(Color::Red);
                 }
@@ -347,7 +368,6 @@ int main()
 
         healthBar.update(player.getHealth());
 
-        // ОТРИСОВКА
         window.clear();
         player.draw(window);
         for (auto& obj : fallingObjects) {
@@ -358,12 +378,9 @@ int main()
         window.draw(bestText);
         window.draw(boostText);
         
-        // Отрисовка бустов
         powerUpManager.draw(window);
 
-        // Отрисовка текста яйцепада
         if (eggRainActive) {
-            // Мерцание в последние 2 секунды
             if (eggRainTimer < 2.0f && static_cast<int>(eggRainTimer * 10) % 2 == 0) {
                 eggRainText.setFillColor(Color::Red);
             } else {
@@ -415,12 +432,16 @@ int main()
                 scoreSaved = false;
                 playerChoseStop = false;
                 
-                // Сброс состояния яйцепада
                 eggRainActive = false;
                 eggRainTimer = 0.0f;
                 powerUpManager.reset();
+                extraEggsCount = 0;
                 
-                // Выключаем режим яйцепада для всех яиц
+                // Очищаем все временные яйца
+                while (fallingObjects.size() > static_cast<size_t>(count_eggs)) {
+                    fallingObjects.pop_back();
+                }
+                
                 for (auto& obj : fallingObjects) {
                     if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
                         egg->disableRainMode();
