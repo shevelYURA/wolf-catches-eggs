@@ -9,10 +9,15 @@ private:
     static inline bool isActive = false;
     static inline float boostTimer = 0.f;
     static inline std::vector<Egg*> boostedEggs;
+    static inline std::vector<bool> eggActive;  // активны ли яйца
 
 public:
     static void activate(float duration = 8.0f) {
         if (isActive) return;
+        
+        // Очищаем старые яйца
+        deactivate();
+        
         isActive = true;
         boostTimer = duration;
         createSnakeEggs();
@@ -34,55 +39,59 @@ public:
             Egg* egg = new Egg();
             egg->setPosition(sf::Vector2f(x, y));
             boostedEggs.push_back(egg);
+            eggActive.push_back(true);  // все яйца активны
         }
     }
     
-    static void update(float deltaTime, std::vector<Egg*>& boostEggs) {
+    static void update(float deltaTime) {
         if (!isActive) return;
         
         boostTimer -= deltaTime;
         if (boostTimer <= 0) {
-            deactivate(boostEggs);
+            deactivate();
             return;
         }
         
-        // Обновляем позиции яиц
+        float speed = 250.f;
+        
         for (int i = 0; i < (int)boostedEggs.size(); i++) {
-            Egg* egg = boostedEggs[i];
-            if (!egg) continue;
+            if (!eggActive[i]) continue;  // пропускаем неактивные
             
-            float speed = 250.f;
+            Egg* egg = boostedEggs[i];
             sf::Vector2f pos = egg->getPosition();
             pos.y += speed * deltaTime;
             egg->setPosition(pos);
             
-            // Если яйцо упало за экран - удаляем
-            if (egg->getPosition().y > 1080) {
-                delete egg;
-                boostedEggs.erase(boostedEggs.begin() + i);
-                i--;
+            // Если упало за экран - делаем неактивным (НЕ удаляем!)
+            if (pos.y > 1080) {
+                eggActive[i] = false;
             }
-        }
-        
-        // Обновляем внешний вектор для отрисовки
-        boostEggs.clear();
-        for (auto* egg : boostedEggs) {
-            boostEggs.push_back(egg);
         }
     }
     
-    static void deactivate(std::vector<Egg*>& boostEggs) {
+    static void deactivate() {
         isActive = false;
         
-        // Удаляем все яйца буста
+        // Удаляем все яйца
         for (auto* egg : boostedEggs) {
             delete egg;
         }
         boostedEggs.clear();
-        boostEggs.clear();
+        eggActive.clear();
     }
     
     static bool isBoostActive() {
         return isActive;
+    }
+    
+    static std::vector<Egg*>& getEggs() {
+        return boostedEggs;
+    }
+    
+    static bool isEggAlive(int index) {
+        if (index >= 0 && index < (int)eggActive.size()) {
+            return eggActive[index];
+        }
+        return false;
     }
 };
