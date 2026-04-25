@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <map>
 #include <vector>
+#include <string>
 #include <filesystem>
 #include "resource.h"
 
@@ -73,7 +74,7 @@ private:
             {IDB_PNG4, "boss.png"},
             {IDB_PNG5, "egg.png"},
             {IDB_PNG6, "icon.png"},
-        {IDB_POWERUP, "powerup.png"}
+            {IDB_POWERUP, "powerup.png"}
         };
 
         auto it = fileNames.find(resourceId);
@@ -84,16 +85,16 @@ private:
     }
 
     static bool tryLoadFromFile(Texture& texture, const string& filename) {
-        vvector<string> searchPaths = {
-        filename,
-        "assets/" + filename,
-        "../assets/" + filename,
-        "../../assets/" + filename,
-        "resources/" + filename,
-        "../resources/" + filename,
-        "images/" + filename,           // ← ДОБАВИТЬ
-        "../images/" + filename,        // ← ДОБАВИТЬ
-        "../../images/" + filename      // ← ДОБАВИТЬ
+        vector<string> searchPaths = {
+            filename,
+            "assets/" + filename,
+            "../assets/" + filename,
+            "../../assets/" + filename,
+            "resources/" + filename,
+            "../resources/" + filename,
+            "images/" + filename,
+            "../images/" + filename,
+            "../../images/" + filename
         };
 
         for (const auto& path : searchPaths) {
@@ -245,7 +246,7 @@ public:
         vector<int> textureIds = {
             IDB_PNG1, IDB_PNG2, IDB_PNG3,
             IDB_PNG4, IDB_PNG5, IDB_PNG6,
-        IDB_POWERUP
+            IDB_POWERUP
         };
 
         for (int id : textureIds) {
