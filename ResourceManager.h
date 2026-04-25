@@ -84,13 +84,16 @@ private:
     }
 
     static bool tryLoadFromFile(Texture& texture, const string& filename) {
-        vector<string> searchPaths = {
-            filename,
-            "assets/" + filename,
-            "../assets/" + filename,
-            "../../assets/" + filename,
-            "resources/" + filename,
-            "../resources/" + filename
+        vvector<string> searchPaths = {
+        filename,
+        "assets/" + filename,
+        "../assets/" + filename,
+        "../../assets/" + filename,
+        "resources/" + filename,
+        "../resources/" + filename,
+        "images/" + filename,           // ← ДОБАВИТЬ
+        "../images/" + filename,        // ← ДОБАВИТЬ
+        "../../images/" + filename      // ← ДОБАВИТЬ
         };
 
         for (const auto& path : searchPaths) {
