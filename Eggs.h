@@ -4,7 +4,7 @@
 
 class Egg : public FallingObject {
 private:
-    bool isGolden; // Золотое яйцо или нет
+    bool isGolden;
 
 public:
     Egg() : FallingObject(IDB_PNG5, Vector2f(40, 35)), isGolden(false) {}
@@ -21,8 +21,14 @@ public:
     bool getGolden() const {
         return isGolden;
     }
-// НОВЫЕ МЕТОДЫ ДЛЯ УПРАВЛЕНИЯ РЕЖИМОМ ЯЙЦЕПАДА
+    
+    // Методы для режима яйцепада
     void enableRainMode() { enableEggRainMode(); }
     void disableRainMode() { disableEggRainMode(); }
     bool isInRainMode() const { return isEggRainMode(); }
+    
+    // Принудительное падение в указанной позиции
+    void forceRainFall(float x, float y) {
+        forceFall(Vector2f(x, y));
+    }
 };
