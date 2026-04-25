@@ -1,6 +1,6 @@
 #include "FallingObject.h"
 #include "ResourceManager.h"
-#include "ScreenConfig.h"
+#include "screenConfig.h"
 
 FallingObject::FallingObject(int resourceId, const Vector2f& size) {
     texture = ResourceManager::getTexture(resourceId);
@@ -12,19 +12,20 @@ FallingObject::FallingObject(int resourceId, const Vector2f& size) {
 
 void FallingObject::init(int resourceId, const Vector2f& size) {
     texture = ResourceManager::getTexture(resourceId);
-
     shape.setSize(size);
     shape.setTexture(&texture);
-    shape.setFillColor(sf::Color::White);  // обычный цвет по умолчанию
+    shape.setFillColor(sf::Color::White);
     speed = 70.0f;
 }
+
 void FallingObject::move(float time) {
-    // РЕЖИМ ЯЙЦЕПАДА - падают строго вниз без ожидания
+    // РЕЖИМ ЯЙЦЕПАДА - падают строго вниз быстро
     if (eggRainMode) {
-        shape.move({0.0f, speed * time * 1.5f});
+        shape.move({0.0f, speed * time * 2.5f});  // Ускоренное падение
         if (shape.getPosition().y > ScreenConfig::scaleY * 1200) {
-            // Не рестартим, а просто убираем с экрана (или рестартим)
+            // Убираем за экран
             shape.setPosition(Vector2f{-100, -100});
+            currentState = waiting;
         }
         return;
     }
@@ -79,6 +80,5 @@ bool FallingObject::isFalling() const {
 }
 
 void FallingObject::setColor(const sf::Color& color) {
-  
     shape.setFillColor(color);
 }
