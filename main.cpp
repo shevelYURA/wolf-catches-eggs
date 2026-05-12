@@ -34,22 +34,18 @@ int main()
     int windowPosX = (desktopMode.size.x - screenWidth) / 2;
     int windowPosY = (desktopMode.size.y - screenHeight) / 2;
     window.setPosition(Vector2i(windowPosX, windowPosY));
-    // ========== ЗАГРУЗКА ФОНА ==========
-Texture backgroundTexture;
-Sprite backgroundSprite;
-if (backgroundTexture.loadFromFile("image/fon.jpg")) {
-    backgroundSprite.setTexture(backgroundTexture);
-    
-    // Масштабируем под размер окна
-    Vector2u windowSize = window.getSize();
-    Vector2u textureSize = backgroundTexture.getSize();
-    backgroundSprite.setScale(
-        (float)windowSize.x / textureSize.x,
-        (float)windowSize.y / textureSize.y
-    );
-}
-// ===================================
+   // ========== ЗАГРУЗКА ФОНА ==========
+Texture& backgroundTexture = ResourceManager::getTexture(IDB_BACKGROUND);
+Sprite backgroundSprite(backgroundTexture);
 
+// Масштабируем под размер окна
+Vector2u windowSize = window.getSize();
+Vector2u textureSize = backgroundTexture.getSize();
+backgroundSprite.setScale(
+    (float)windowSize.x / textureSize.x,
+    (float)windowSize.y / textureSize.y
+);
+// ===================================
     HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDB_PNG6), L"PNG");
     if (hRes) {
         HGLOBAL hData = LoadResource(NULL, hRes);
