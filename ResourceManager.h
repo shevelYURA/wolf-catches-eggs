@@ -73,6 +73,7 @@ private:
             {IDB_PNG4, "boss.png"},
             {IDB_PNG5, "egg.png"},
             {IDB_PNG6, "icon.png"}
+            {IDB_BACKGROUND, "fon.jpg"}
         };
 
         auto it = fileNames.find(resourceId);
