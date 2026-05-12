@@ -72,7 +72,7 @@ private:
             {IDB_PNG3, "bomb.png"},
             {IDB_PNG4, "boss.png"},
             {IDB_PNG5, "egg.png"},
-            {IDB_PNG6, "icon.png"}
+            {IDB_PNG6, "icon.png"},
             {IDB_BACKGROUND, "fon.jpg"}
         };
 

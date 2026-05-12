@@ -41,10 +41,10 @@ Sprite backgroundSprite(backgroundTexture);
 // Масштабируем под размер окна
 Vector2u windowSize = window.getSize();
 Vector2u textureSize = backgroundTexture.getSize();
-backgroundSprite.setScale(
+backgroundSprite.setScale(Vector2f(
     (float)windowSize.x / textureSize.x,
     (float)windowSize.y / textureSize.y
-);
+));
 // ===================================
     HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDB_PNG6), L"PNG");
     if (hRes) {
@@ -306,7 +306,7 @@ backgroundSprite.setScale(
 
         window.clear();
         // ОТРИСОВКА ФОНА
-if (backgroundSprite.getTexture() != nullptr) {
+if (backgroundSprite.getTexture().getNativeHandle() != 0) {
     window.draw(backgroundSprite);
 }
         player.draw(window);
