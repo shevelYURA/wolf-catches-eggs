@@ -217,7 +217,6 @@ int main()
 
                     if (doublePoints) {
                         points *= 2;
-                        //scoreCounter.addScore(500);   // Обычное: 500 очков
                     }
 
                     scoreCounter.addScore(points);
@@ -265,7 +264,6 @@ int main()
         }
 
         // Таймер для двойных очков
-                // Таймер для двойных очков
         if (doublePoints) {
             doublePointsTimer -= time;
             if (doublePointsTimer <= 0.0f) {

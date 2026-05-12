@@ -15,7 +15,7 @@ void FallingObject::init(int resourceId, const Vector2f& size) {
 
     shape.setSize(size);
     shape.setTexture(&texture);
-    shape.setFillColor(sf::Color::White);  // обычный цвет по умолчанию
+    shape.setFillColor(sf::Color::White);
     speed = 70.0f;
 }
 void FallingObject::move(float time) {
@@ -68,6 +68,5 @@ bool FallingObject::isFalling() const {
 }
 
 void FallingObject::setColor(const sf::Color& color) {
-  
-    shape.setFillColor(color);
+      shape.setFillColor(color);
 }

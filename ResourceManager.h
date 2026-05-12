@@ -236,15 +236,4 @@ public:
         }
         return font;
     }
-
-    static void preloadAllTextures() {
-        vector<int> textureIds = {
-            IDB_PNG1, IDB_PNG2, IDB_PNG3,
-            IDB_PNG4, IDB_PNG5, IDB_PNG6
-        };
-
-        for (int id : textureIds) {
-            getTexture(id);
-        }
-    }
 };

@@ -16,7 +16,7 @@ class Player
 
     PlayersAttack attack;
     bool attackKeyPressed;
-    void handleAttack(const sf::RenderWindow& window);
+    void handleAttack(const RenderWindow& window);
 
 public:
     Player();
