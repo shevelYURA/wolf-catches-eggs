@@ -8,6 +8,7 @@
 #define IDB_PNG4                        106
 #define IDB_PNG5                        107
 #define IDB_PNG6                        108
+#define IDB_POWERUP                     109
 #define FONT_ARCADE                     201
 
 // Next default values for new objects

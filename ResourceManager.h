@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <map>
 #include <vector>
+#include <string>
 #include <filesystem>
 #include "resource.h"
 
@@ -72,7 +73,8 @@ private:
             {IDB_PNG3, "bomb.png"},
             {IDB_PNG4, "boss.png"},
             {IDB_PNG5, "egg.png"},
-            {IDB_PNG6, "icon.png"}
+            {IDB_PNG6, "icon.png"},
+            {IDB_POWERUP, "powerup.png"}
         };
 
         auto it = fileNames.find(resourceId);
@@ -89,7 +91,10 @@ private:
             "../assets/" + filename,
             "../../assets/" + filename,
             "resources/" + filename,
-            "../resources/" + filename
+            "../resources/" + filename,
+            "images/" + filename,
+            "../images/" + filename,
+            "../../images/" + filename
         };
 
         for (const auto& path : searchPaths) {
