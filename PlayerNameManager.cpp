@@ -43,5 +43,6 @@ void PlayerNameManager::updatePersonalBest(int score) {
     if (score > personalBest) {
         personalBest = score;
         saveToFile();
+        std::cout << "Local BEST updated: " << score << std::endl;
     }
 }
