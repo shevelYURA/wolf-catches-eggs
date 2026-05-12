@@ -9,7 +9,7 @@
 #include "BossHealthBar.h"
 #include <ctime>
 #include <cstdlib>
-#include <vector>0
+#include <vector>
 #include <memory>
 #include "ResourceManager.h"
 #include "dialog.h"
@@ -50,7 +50,6 @@ int main()
     }
 
     FirebaseManager firebase;
-    firebase.clearAllScores();
     bool scoreSaved = false;
 
     Player player;
