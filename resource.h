@@ -22,3 +22,4 @@
 #endif
 #define IDB_BACKGROUND  20 
 #define IDB_BOMB    109
+#define IDB_BOSS 110
