@@ -35,7 +35,19 @@ int main()
     int windowPosX = (desktopMode.size.x - screenWidth) / 2;
     int windowPosY = (desktopMode.size.y - screenHeight) / 2;
     window.setPosition(Vector2i(windowPosX, windowPosY));
+    
+    // ========== ЗАГРУЗКА ФОНА ==========
+    Texture& backgroundTexture = ResourceManager::getTexture(IDB_BACKGROUND);
+    Sprite backgroundSprite(backgroundTexture);
 
+    Vector2u windowSize = window.getSize();
+    Vector2u textureSize = backgroundTexture.getSize();
+    backgroundSprite.setScale(Vector2f(
+        (float)windowSize.x / textureSize.x,
+        (float)windowSize.y / textureSize.y
+    ));
+    // ===================================
+    
     HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDB_PNG6), L"PNG");
     if (hRes) {
         HGLOBAL hData = LoadResource(NULL, hRes);
@@ -66,9 +78,8 @@ int main()
     Player player;
     std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
-    int extraEggsCount = 0;  // Счётчик временных яиц
+    int extraEggsCount = 0;
     
-    // СОЗДАНИЕ ОСНОВНЫХ ЯИЦ С 20% ШАНСОМ ЗОЛОТОГО
     for (int i = 0; i < count_eggs; ++i) {
         auto egg = std::make_unique<Egg>();
         if (rand() % 100 < 20) {
@@ -83,15 +94,13 @@ int main()
     BossHealthBar bossHealthBar;
     bool bossDefeated = false;
 
-    // БУСТ: ДВОЙНЫЕ ОЧКИ
     bool doublePoints = false;
     float doublePointsTimer = 0.0f;
 
-    // НОВЫЙ БУСТ: ЯЙЦЕПАД
     PowerUpManager powerUpManager;
     bool eggRainActive = false;
     float eggRainTimer = 0.0f;
-    const float EGG_RAIN_DURATION = 6.0f;
+    const float EGG_RAIN_DURATION = 12.0f;  // ← 12 СЕКУНД!
 
     Clock clock;
     Font& font = ResourceManager::getFont(0);
@@ -224,7 +233,6 @@ int main()
 
         powerUpManager.update(time);
 
-        // ПРОВЕРКА СТОЛКНОВЕНИЙ С БУСТАМИ И АКТИВАЦИЯ ЯЙЦЕПАДА
         for (auto& powerUp : powerUpManager.getPowerUps()) {
             if (powerUp->collision(player.getBasketBounds())) {
                 if (powerUp->getType() == PowerUpType::EggRain) {
@@ -232,30 +240,25 @@ int main()
                         eggRainActive = true;
                         eggRainTimer = EGG_RAIN_DURATION;
                         
-                        // Включаем режим для существующих яиц
                         for (auto& obj : fallingObjects) {
                             if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
                                 egg->enableRainMode();
                             }
                         }
                         
-                        // СОЗДАЁМ 40 НОВЫХ ЯИЦ ДЛЯ ЯЙЦЕПАДА!
-                        int newEggsCount = 40;
+                        int newEggsCount = 80;
                         extraEggsCount = newEggsCount;
                         
                         for (int i = 0; i < newEggsCount; i++) {
                             auto newEgg = std::make_unique<Egg>();
                             
-                            // 20% шанс золотого яйца
                             if (rand() % 100 < 20) {
                                 newEgg->setGolden(true);
                             }
                             
-                            // Распределяем по ширине экрана (змейкой)
                             float x = ScreenConfig::scaleX * (100 + (rand() % 1720));
-                            float y = ScreenConfig::scaleY * (-50 - (i * 25));  // Ярусами
+                            float y = ScreenConfig::scaleY * (-50 - (i * 15));
                             
-                            // Заставляем яйцо падать в режиме яйцепада
                             newEgg->forceRainFall(x, y);
                             newEgg->enableRainMode();
                             
@@ -268,7 +271,6 @@ int main()
             }
         }
 
-        // ДВИЖЕНИЕ И СБОР ЯИЦ
         for (auto& obj : fallingObjects) {
             obj->move(time);
             if (obj->collision(player.getBasketBounds())) {
@@ -283,18 +285,15 @@ int main()
             }
         }
 
-        // ТАЙМЕР ЯЙЦЕПАДА И УДАЛЕНИЕ ВРЕМЕННЫХ ЯИЦ
         if (eggRainActive) {
             eggRainTimer -= time;
             if (eggRainTimer <= 0.0f) {
                 eggRainActive = false;
                 
-                // Удаляем временные яйца (которые были добавлены при бусте)
                 while (fallingObjects.size() > static_cast<size_t>(count_eggs)) {
                     fallingObjects.pop_back();
                 }
                 
-                // Выключаем режим для оставшихся основных яиц
                 for (auto& obj : fallingObjects) {
                     if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
                         egg->disableRainMode();
@@ -369,6 +368,9 @@ int main()
         healthBar.update(player.getHealth());
 
         window.clear();
+        if (backgroundSprite.getTexture().getNativeHandle() != 0) {
+            window.draw(backgroundSprite);
+        }
         player.draw(window);
         for (auto& obj : fallingObjects) {
             obj->draw(window);
@@ -437,7 +439,6 @@ int main()
                 powerUpManager.reset();
                 extraEggsCount = 0;
                 
-                // Очищаем все временные яйца
                 while (fallingObjects.size() > static_cast<size_t>(count_eggs)) {
                     fallingObjects.pop_back();
                 }
