@@ -19,11 +19,10 @@ void FallingObject::init(int resourceId, const Vector2f& size) {
 }
 
 void FallingObject::move(float time) {
-    // РЕЖИМ ЯЙЦЕПАДА - падают строго вниз быстро
+    // РЕЖИМ ЯЙЦЕПАДА - падают ОЧЕНЬ БЫСТРО
     if (eggRainMode) {
-        shape.move({0.0f, speed * time * 2.5f});  // Ускоренное падение
+        shape.move({0.0f, speed * time * 4.0f});  // ×4.0 скорость
         if (shape.getPosition().y > ScreenConfig::scaleY * 1200) {
-            // Убираем за экран
             shape.setPosition(Vector2f{-100, -100});
             currentState = waiting;
         }
