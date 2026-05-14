@@ -5,6 +5,8 @@
 #include "PowerUp.h"
 #include "screenConfig.h"
 
+using namespace sf;
+
 class PowerUpManager {
 private:
     std::vector<std::unique_ptr<PowerUp>> powerUps;
@@ -12,27 +14,24 @@ private:
     float spawnInterval;
 
 public:
-    PowerUpManager() : spawnTimer(0), spawnInterval(12.0f) {}
+    PowerUpManager() : spawnTimer(0), spawnInterval(35.0f) {}
 
     void update(float time) {
-        // Спавн новых бустов
         spawnTimer += time;
         if (spawnTimer >= spawnInterval) {
             spawnTimer = 0;
-            spawnInterval = 8.0f + (rand() % 8);
+            spawnInterval = 35.0f + (rand() % 15);  // 35-50 секунд между звёздами
             
             auto powerUp = std::make_unique<PowerUp>(PowerUpType::EggRain);
             float randomX = static_cast<float>(rand() % static_cast<int>(ScreenConfig::scaleX * 1800) + 50);
-            // Устанавливаем позицию вручную через setPosition (добавим в FallingObject)
+            powerUp->setPosition(Vector2f(randomX, -50));
             powerUps.push_back(std::move(powerUp));
         }
 
-        // Движение всех бустов
         for (auto& powerUp : powerUps) {
             powerUp->move(time);
         }
 
-        // Удаление упавших
         powerUps.erase(std::remove_if(powerUps.begin(), powerUps.end(),
             [](const std::unique_ptr<PowerUp>& p) {
                 return p->getBounds().position.y > ScreenConfig::scaleY * 1100;
@@ -50,6 +49,6 @@ public:
     void reset() {
         powerUps.clear();
         spawnTimer = 0;
-        spawnInterval = 12.0f;
+        spawnInterval = 35.0f;
     }
 };
