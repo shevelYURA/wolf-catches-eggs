@@ -35,18 +35,20 @@ int main()
     int windowPosX = (desktopMode.size.x - screenWidth) / 2;
     int windowPosY = (desktopMode.size.y - screenHeight) / 2;
     window.setPosition(Vector2i(windowPosX, windowPosY));
-   // ========== ЗАГРУЗКА ФОНА ==========
-Texture& backgroundTexture = ResourceManager::getTexture(IDB_BACKGROUND);
-Sprite backgroundSprite(backgroundTexture);
+    
+    // ========== ЗАГРУЗКА ФОНА ==========
+    Texture& backgroundTexture = ResourceManager::getTexture(IDB_BACKGROUND);
+    Sprite backgroundSprite(backgroundTexture);
 
-// Масштабируем под размер окна
-Vector2u windowSize = window.getSize();
-Vector2u textureSize = backgroundTexture.getSize();
-backgroundSprite.setScale(Vector2f(
-    (float)windowSize.x / textureSize.x,
-    (float)windowSize.y / textureSize.y
-));
-// ===================================
+    // Масштабируем под размер окна
+    Vector2u windowSize = window.getSize();
+    Vector2u textureSize = backgroundTexture.getSize();
+    backgroundSprite.setScale(Vector2f(
+        (float)windowSize.x / textureSize.x,
+        (float)windowSize.y / textureSize.y
+    ));
+    // ===================================
+    
     HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDB_PNG6), L"PNG");
     if (hRes) {
         HGLOBAL hData = LoadResource(NULL, hRes);
@@ -102,7 +104,7 @@ backgroundSprite.setScale(Vector2f(
     PowerUpManager powerUpManager;
     bool eggRainActive = false;
     float eggRainTimer = 0.0f;
-    const float EGG_RAIN_DURATION = 6.0f;
+    const float EGG_RAIN_DURATION = 10.0f;  // ← ИЗМЕНЕНО: 10 секунд (было 6)
 
     Clock clock;
     Font& font = ResourceManager::getFont(0);
@@ -250,8 +252,8 @@ backgroundSprite.setScale(Vector2f(
                             }
                         }
                         
-                        // СОЗДАЁМ 40 НОВЫХ ЯИЦ ДЛЯ ЯЙЦЕПАДА!
-                        int newEggsCount = 40;
+                        // СОЗДАЁМ 80 НОВЫХ ЯИЦ ДЛЯ ЯЙЦЕПАДА!
+                        int newEggsCount = 80;  // ← ИЗМЕНЕНО: 80 яиц (было 40)
                         extraEggsCount = newEggsCount;
                         
                         for (int i = 0; i < newEggsCount; i++) {
@@ -262,9 +264,9 @@ backgroundSprite.setScale(Vector2f(
                                 newEgg->setGolden(true);
                             }
                             
-                            // Распределяем по ширине экрана (змейкой)
+                            // Распределяем по ширине экрана
                             float x = ScreenConfig::scaleX * (100 + (rand() % 1720));
-                            float y = ScreenConfig::scaleY * (-50 - (i * 25));  // Ярусами
+                            float y = ScreenConfig::scaleY * (-50 - (i * 15));  // ← Яйца ближе друг к другу
                             
                             // Заставляем яйцо падать в режиме яйцепада
                             newEgg->forceRainFall(x, y);
@@ -382,9 +384,9 @@ backgroundSprite.setScale(Vector2f(
 
         window.clear();
         // ОТРИСОВКА ФОНА
-if (backgroundSprite.getTexture().getNativeHandle() != 0) {
-    window.draw(backgroundSprite);
-}
+        if (backgroundSprite.getTexture().getNativeHandle() != 0) {
+            window.draw(backgroundSprite);
+        }
         player.draw(window);
         for (auto& obj : fallingObjects) {
             obj->draw(window);
