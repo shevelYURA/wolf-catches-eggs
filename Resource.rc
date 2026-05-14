@@ -72,6 +72,8 @@ IDB_PNG6                PNG                     "image\\icon.png"
 
 IDB_POWERUP             PNG                     "image\\powerup.png"
 
+IDB_BACKGROUND           PNG                     "image\\fon.jpg"
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // RCDATA
