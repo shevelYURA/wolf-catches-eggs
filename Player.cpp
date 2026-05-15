@@ -5,7 +5,7 @@
 Player::Player() : health(100), attackKeyPressed(false)
 {
     texWolf = ResourceManager::getTexture(IDB_PNG1);
-    texBasket = ResourceManager::getTexture(IDB_PNG2);
+    texBasket = ResourceManager::getTexture(IDB_BASKET);
 
     wolf.setSize(ScreenConfig::size(150, 150));
     wolf.setTexture(&texWolf);
