@@ -27,7 +27,7 @@ public:
             
             // Устанавливаем следующий интервал
             if (isBossActive) {
-                bossSpawnInterval = 12.0f + (rand() % 8);  // ← 12-20 секунд
+                bossSpawnInterval = 12.0f + (rand() % 8);  // 12-20 секунд
             } else {
                 normalSpawnInterval = 20.0f + (rand() % 10);
             }
@@ -36,18 +36,27 @@ public:
             PowerUpType type;
             
             if (isBossActive) {
-                // 50% шанс перчатки, 50% шанс других бустов
+                // 50% шанс перчатки, 50% шанс других бустов (яйцепад или двойные очки)
                 int randomType = rand() % 2;  // 0 или 1
                 if (randomType == 0) {
-                    type = PowerUpType::BoxingGlove;  // ← ПЕРЧАТКА
+                    type = PowerUpType::BoxingGlove;  // ПЕРЧАТКА (50%)
                 } else {
+                    // Другие бусты: 50% яйцепад, 50% двойные очки
                     int otherType = rand() % 2;
-                    type = (otherType == 0) ? PowerUpType::EggRain : PowerUpType::DoublePoints;
+                    if (otherType == 0) {
+                        type = PowerUpType::EggRain;
+                    } else {
+                        type = PowerUpType::DoublePoints;
+                    }
                 }
             } else {
-                // Когда босса нет: только яйцепад и двойные очки
+                // Когда босса нет: 50% яйцепад, 50% двойные очки
                 int randomType = rand() % 2;
-                type = (randomType == 0) ? PowerUpType::EggRain : PowerUpType::DoublePoints;
+                if (randomType == 0) {
+                    type = PowerUpType::EggRain;
+                } else {
+                    type = PowerUpType::DoublePoints;
+                }
             }
             
             auto powerUp = std::make_unique<PowerUp>(type);
