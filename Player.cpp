@@ -41,7 +41,7 @@ void Player::update(float time, const RenderWindow& window)
         wolf.setPosition(Vector2f(0, pos.y));
     }
 
-    basket.setPosition(Vector2f(wolf.getPosition().x+85, wolf.getPosition().y + 50));
+    basket.setPosition(Vector2f(wolf.getPosition().x + 85, wolf.getPosition().y + 50));
 
     handleAttack(window);
 
@@ -94,6 +94,13 @@ void Player::takeDamage(int damage)
 {
     health -= damage;
     if (health < 0) health = 0;
+    checkHealth();
+}
+
+void Player::heal(int amount)
+{
+    health += amount;
+    if (health > 100) health = 100;
     checkHealth();
 }
 

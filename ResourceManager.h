@@ -79,6 +79,8 @@ private:
             {IDB_BOMB, "bomb.png"},
             {IDB_BASKET, "basket.png"},
             {IDB_BOXING_GLOVE, "boxing_glove.png"},
+            {IDB_BURGER, "burger.png"},      
+            {IDB_POTION, "potion.png"} 
         };
 
         auto it = fileNames.find(resourceId);

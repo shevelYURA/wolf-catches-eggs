@@ -78,6 +78,10 @@ IDB_BASKET              PNG                     "image/basket.png"
 
 IDB_BOXING_GLOVE        PNG                     "image\\boxing_glove.png"
 
+IDB_BURGER               PNG                     "image\\burger.png"
+
+IDB_POTION               PNG                     "image\\potion.png"
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // RCDATA
