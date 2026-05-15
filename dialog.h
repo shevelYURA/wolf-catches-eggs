@@ -76,14 +76,14 @@ public:
         // Текст кнопок
         stopText.setFont(font);
         stopText.setString("STOP");
-        stopText.setCharacterSize(28);
+        stopText.setCharacterSize(static_cast<unsigned int>(28 * ScreenConfig::scaleY));
         stopText.setFillColor(Color::White);
         stopText.setOutlineColor(Color::Black);
         stopText.setOutlineThickness(1);
 
         continueText.setFont(font);
         continueText.setString("CONTINUE");
-        continueText.setCharacterSize(28);
+        continueText.setCharacterSize(static_cast<unsigned int>(28 * ScreenConfig::scaleY));
         continueText.setFillColor(Color::White);
         continueText.setOutlineColor(Color::Black);
         continueText.setOutlineThickness(1);

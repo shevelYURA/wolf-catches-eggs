@@ -16,7 +16,7 @@ public:
     PowerUp(PowerUpType t = PowerUpType::EggRain) 
         : FallingObject(
             (t == PowerUpType::BoxingGlove) ? IDB_BOXING_GLOVE : IDB_POWERUP,
-            Vector2f(40, 40)
+            ScreenConfig::size(40, 40)
           ), type(t) {}
 
     PowerUpType getType() const { return type; }

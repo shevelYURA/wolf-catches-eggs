@@ -20,7 +20,7 @@ HealthBar::HealthBar() : healthText(nullptr)
 
     // Настройка текста здоровья
     healthText->setString("Health: 100/100");
-    healthText->setCharacterSize(36);
+    healthText->setCharacterSize(static_cast<unsigned int>(36 * ScreenConfig::scaleY));
     healthText->setFillColor(Color::White);
     healthText->setOutlineColor(Color::Black);
     healthText->setOutlineThickness(1);

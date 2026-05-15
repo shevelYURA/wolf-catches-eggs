@@ -147,7 +147,7 @@ int main()
 
     Text enterNameText(font);
     enterNameText.setString("ENTER YOUR NAME: " + inputName + "_");
-    enterNameText.setCharacterSize(48);
+    enterNameText.setCharacterSize(static_cast<unsigned int>(48 * ScreenConfig::scaleY));
     enterNameText.setFillColor(Color::White);
     enterNameText.setOutlineColor(Color::Black);
     enterNameText.setOutlineThickness(2);
@@ -155,21 +155,21 @@ int main()
     enterNameText.setOrigin(Vector2f(enterNameText.getLocalBounds().size.x / 2, enterNameText.getLocalBounds().size.y / 2));
 
     Text bestText(font);
-    bestText.setCharacterSize(28);
+    bestText.setCharacterSize(static_cast<unsigned int>(28 * ScreenConfig::scaleY));
     bestText.setFillColor(Color::Yellow);
     bestText.setOutlineColor(Color::Black);
     bestText.setOutlineThickness(1);
     bestText.setPosition(ScreenConfig::pos(250, 25));
 
     Text boostText(font);
-    boostText.setCharacterSize(28);
+    boostText.setCharacterSize(static_cast<unsigned int>(28 * ScreenConfig::scaleY));
     boostText.setFillColor(Color(255, 215, 0));
     boostText.setOutlineColor(Color::Black);
     boostText.setOutlineThickness(1);
     boostText.setPosition(ScreenConfig::pos(250, 55));
 
     Text eggRainText(font);
-    eggRainText.setCharacterSize(48);
+    eggRainText.setCharacterSize(static_cast<unsigned int>(48 * ScreenConfig::scaleY));
     eggRainText.setFillColor(Color(255, 100, 255));
     eggRainText.setOutlineColor(Color::Black);
     eggRainText.setOutlineThickness(2);
@@ -178,7 +178,7 @@ int main()
 
     Text gameOverText(font);
     gameOverText.setString("GAME OVER! Press R to restart");
-    gameOverText.setCharacterSize(72);
+    gameOverText.setCharacterSize(static_cast<unsigned int>(72 * ScreenConfig::scaleY));
     gameOverText.setFillColor(Color::Red);
     gameOverText.setOutlineColor(Color::Black);
     gameOverText.setOutlineThickness(3);
@@ -189,7 +189,7 @@ int main()
 
     Text victoryText(font);
     victoryText.setString("VICTORY! Press R to continue");
-    victoryText.setCharacterSize(72);
+    victoryText.setCharacterSize(static_cast<unsigned int>(72 * ScreenConfig::scaleY));
     victoryText.setFillColor(Color::Yellow);
     victoryText.setOutlineColor(Color::Black);
     victoryText.setOutlineThickness(3);
@@ -203,7 +203,7 @@ int main()
 
     // ТЕКСТ ДЛЯ БУСТА "БОКСЁРСКАЯ ПЕРЧАТКА"
     Text boxingGloveText(font);
-    boxingGloveText.setCharacterSize(36);
+    boxingGloveText.setCharacterSize(static_cast<unsigned int>(36 * ScreenConfig::scaleY));
     boxingGloveText.setFillColor(Color(255, 80, 80));
     boxingGloveText.setOutlineColor(Color::Black);
     boxingGloveText.setOutlineThickness(2);

@@ -21,4 +21,8 @@ public:
     static Vector2f size(float w, float h) {
         return Vector2f(w * scaleX, h * scaleY);
     }
+
+    static unsigned int fontSize(float size) {
+        return static_cast<unsigned int>(size * std::min(scaleX, scaleY));
+    }
 };
