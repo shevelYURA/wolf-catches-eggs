@@ -10,6 +10,7 @@
 #define IDB_PNG6                        108
 #define IDB_POWERUP                     109
 #define FONT_ARCADE                     201
+#define IDB_BOSS                        119
 
 // Next default values for new objects
 // 
