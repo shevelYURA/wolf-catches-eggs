@@ -34,6 +34,7 @@ public:
 
     int getHealth() const;
     void takeDamage(int damage);
+    void heal(int amount);  // ← НОВЫЙ МЕТОД
     bool isAlive() const;
     void reset();
 
