@@ -4,7 +4,8 @@
 
 enum class PowerUpType {
     DoublePoints,
-    EggRain
+    EggRain,
+    BoxingGlove
 };
 
 class PowerUp : public FallingObject {
