@@ -12,6 +12,7 @@
 #define FONT_ARCADE                     201
 #define IDB_BOSS                        119
 #define IDB_BOMB                        110
+#define IDB_BASKET                      112
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
