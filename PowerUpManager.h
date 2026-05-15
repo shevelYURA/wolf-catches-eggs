@@ -15,7 +15,7 @@ private:
     float bossSpawnInterval;
 
 public:
-    PowerUpManager() : spawnTimer(0), normalSpawnInterval(25.0f), bossSpawnInterval(15.0f) {}
+    PowerUpManager() : spawnTimer(0), normalSpawnInterval(20.0f), bossSpawnInterval(15.0f) {}
 
     void update(float time, bool isBossActive) {
         spawnTimer += time;
@@ -27,7 +27,7 @@ public:
             
             // Устанавливаем следующий интервал
             if (isBossActive) {
-                bossSpawnInterval = 12.0f + (rand() % 8);  // 12-20 секунд
+                bossSpawnInterval = 12.0f + (rand() % 8);
             } else {
                 normalSpawnInterval = 20.0f + (rand() % 10);
             }
@@ -36,21 +36,23 @@ public:
             PowerUpType type;
             
             if (isBossActive) {
-                // 50% шанс перчатки, 50% шанс других бустов (яйцепад или двойные очки)
-                int randomType = rand() % 2;  // 0 или 1
-                if (randomType == 0) {
-                    type = PowerUpType::BoxingGlove;  // ПЕРЧАТКА (50%)
+                // КОГДА БОСС ЕСТЬ (падают все бусты)
+                // 20% Перчатка, 20% Яйцепад, 20% Двойные очки, 30% Бургер, 10% Зелье
+                int randomType = rand() % 10;
+                if (randomType < 2) {
+                    type = PowerUpType::BoxingGlove;      // 20%
+                } else if (randomType < 4) {
+                    type = PowerUpType::EggRain;          // 20%
+                } else if (randomType < 6) {
+                    type = PowerUpType::DoublePoints;     // 20%
+                } else if (randomType < 9) {
+                    type = PowerUpType::Burger;           // 30%
                 } else {
-                    // Другие бусты: 50% яйцепад, 50% двойные очки
-                    int otherType = rand() % 2;
-                    if (otherType == 0) {
-                        type = PowerUpType::EggRain;
-                    } else {
-                        type = PowerUpType::DoublePoints;
-                    }
+                    type = PowerUpType::Potion;           // 10%
                 }
             } else {
-                // Когда босса нет: 50% яйцепад, 50% двойные очки
+                // КОГДА БОССА НЕТ (ТОЛЬКО обычные бусты, БЕЗ бургера и зелья)
+                // 50% Яйцепад, 50% Двойные очки
                 int randomType = rand() % 2;
                 if (randomType == 0) {
                     type = PowerUpType::EggRain;
@@ -88,7 +90,7 @@ public:
     void reset() {
         powerUps.clear();
         spawnTimer = 0;
-        normalSpawnInterval = 25.0f;
+        normalSpawnInterval = 20.0f;
         bossSpawnInterval = 15.0f;
     }
 };
