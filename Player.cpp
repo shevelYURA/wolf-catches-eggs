@@ -12,7 +12,7 @@ Player::Player() : health(100), attackKeyPressed(false),
     wolf.setTexture(&texWolf);
     wolf.setPosition(ScreenConfig::pos(910, 920));
 
-    basket.setSize(ScreenConfig::size(70, 50));
+    basket.setSize(ScreenConfig::size(100, 100));
     basket.setTexture(&texBasket);
 }
 
