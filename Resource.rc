@@ -73,6 +73,7 @@ IDB_PNG6                PNG                     "image\\icon.png"
 IDB_POWERUP             PNG                     "image\\powerup.png"
 IDB_BACKGROUND          PNG                     "image/fon.jpg"
 IDB_BOSS                PNG                     "image/PETUSHARA.png"
+IDB_BOMB                PNG                     "image/bomb.png"
 /////////////////////////////////////////////////////////////////////////////
 //
 // RCDATA
