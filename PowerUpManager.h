@@ -36,22 +36,28 @@ public:
             PowerUpType type;
             
             if (isBossActive) {
-                // КОГДА БОСС ЕСТЬ (падают все бусты)
-                // 20% Перчатка, 20% Яйцепад, 20% Двойные очки, 30% Бургер, 10% Зелье
-                int randomType = rand() % 10;
-                if (randomType < 2) {
-                    type = PowerUpType::BoxingGlove;      // 20%
-                } else if (randomType < 4) {
-                    type = PowerUpType::EggRain;          // 20%
-                } else if (randomType < 6) {
-                    type = PowerUpType::DoublePoints;     // 20%
-                } else if (randomType < 9) {
-                    type = PowerUpType::Burger;           // 30%
-                } else {
-                    type = PowerUpType::Potion;           // 10%
+                // КОГДА БОСС ЕСТЬ (все бусты равномерно по 20%)
+                // 5 типов бустов × 20% = 100%
+                int randomType = rand() % 5;  // 0,1,2,3,4
+                switch (randomType) {
+                    case 0:
+                        type = PowerUpType::BoxingGlove;   // 20%
+                        break;
+                    case 1:
+                        type = PowerUpType::EggRain;       // 20%
+                        break;
+                    case 2:
+                        type = PowerUpType::DoublePoints;  // 20%
+                        break;
+                    case 3:
+                        type = PowerUpType::Burger;        // 20%
+                        break;
+                    default:
+                        type = PowerUpType::Potion;        // 20%
+                        break;
                 }
             } else {
-                // КОГДА БОССА НЕТ (ТОЛЬКО обычные бусты, БЕЗ бургера и зелья)
+                // КОГДА БОССА НЕТ (только обычные бусты)
                 // 50% Яйцепад, 50% Двойные очки
                 int randomType = rand() % 2;
                 if (randomType == 0) {
