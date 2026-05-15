@@ -466,4 +466,31 @@ int main()
                 bossDefeated = false;
                 dialogShown = false;
                 waitingForChoice = false;
-                doublePoints =
+                doublePoints = false;
+                doublePointsTimer = 0.0f;
+                scoreSaved = false;
+                playerChoseStop = false;
+                
+                eggRainActive = false;
+                eggRainTimer = 0.0f;
+                powerUpManager.reset();
+                extraEggsCount = 0;
+                
+                while (fallingObjects.size() > static_cast<size_t>(count_eggs)) {
+                    fallingObjects.pop_back();
+                }
+                
+                for (auto& obj : fallingObjects) {
+                    if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
+                        egg->disableRainMode();
+                    }
+                    obj->restart();
+                }
+            }
+        }
+        bossDialog.draw(window);
+        window.display();
+    }
+
+    return 0;
+}
