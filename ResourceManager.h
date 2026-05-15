@@ -77,7 +77,8 @@ private:
             {IDB_POWERUP, "powerup.png"},
             {IDB_PNG6, "icon.png"},
             {IDB_BACKGROUND, "fon.jpg"},
-            {IDB_BOSS, "PETUSHARA.png"}
+            {IDB_BOSS, "PETUSHARA.png"},
+            {IDB_BOMB, "bomb.png"}
         };
 
         auto it = fileNames.find(resourceId);
