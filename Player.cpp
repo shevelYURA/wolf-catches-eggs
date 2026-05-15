@@ -12,7 +12,7 @@ Player::Player() : health(100), attackKeyPressed(false),
     wolf.setTexture(&texWolf);
     wolf.setPosition(ScreenConfig::pos(910, 920));
 
-    basket.setSize(ScreenConfig::size(100, 100));
+    basket.setSize(ScreenConfig::size(70, 50));
     basket.setTexture(&texBasket);
 }
 
@@ -41,7 +41,7 @@ void Player::update(float time, const RenderWindow& window)
         wolf.setPosition(Vector2f(0, pos.y));
     }
 
-    basket.setPosition(Vector2f(wolf.getPosition().x+70, wolf.getPosition().y + 30));
+    basket.setPosition(Vector2f(wolf.getPosition().x+85, wolf.getPosition().y + 50));
 
     handleAttack(window);
 
