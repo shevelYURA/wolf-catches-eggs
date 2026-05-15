@@ -20,6 +20,46 @@
 
 using namespace sf;
 
+void restartGame(Player& player, Scorer& scoreCounter, Boss& boss,
+    BossHealthBar& bossHealthBar, bool& bossDefeated,
+    bool& dialogShown, bool& waitingForChoice,
+    bool& doublePoints, float& doublePointsTimer,
+    bool& scoreSaved, bool& playerChoseStop,
+    bool& eggRainActive, float& eggRainTimer,
+    PowerUpManager& powerUpManager, int& extraEggsCount,
+    std::vector<std::unique_ptr<FallingObject>>& fallingObjects,
+    int count_eggs, bool& showVictory) {
+    player.reset();
+    scoreCounter.reset();
+    boss.reset();
+    bossHealthBar.setActive(false);
+    bossDefeated = false;
+    dialogShown = false;
+    waitingForChoice = false;
+    doublePoints = false;
+    doublePointsTimer = 0.0f;
+    scoreSaved = false;
+    playerChoseStop = false;
+
+    eggRainActive = false;
+    eggRainTimer = 0.0f;
+    powerUpManager.reset();
+    extraEggsCount = 0;
+
+    while (fallingObjects.size() > static_cast<size_t>(count_eggs)) {
+        fallingObjects.pop_back();
+    }
+
+    for (auto& obj : fallingObjects) {
+        if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
+            egg->disableRainMode();
+        }
+        obj->restart();
+    }
+
+    showVictory = false;
+}
+
 int main()
 {
     srand(static_cast<unsigned int>(time(nullptr)));
@@ -135,6 +175,31 @@ int main()
     eggRainText.setOutlineThickness(2);
     eggRainText.setPosition(ScreenConfig::pos(960, 150));
     eggRainText.setOrigin(Vector2f(eggRainText.getLocalBounds().size.x / 2, eggRainText.getLocalBounds().size.y / 2));
+
+    Text gameOverText(font);
+    gameOverText.setString("GAME OVER! Press R to restart");
+    gameOverText.setCharacterSize(72);
+    gameOverText.setFillColor(Color::Red);
+    gameOverText.setOutlineColor(Color::Black);
+    gameOverText.setOutlineThickness(3);
+
+    FloatRect gameOverBounds = gameOverText.getLocalBounds();
+    gameOverText.setOrigin(Vector2f(gameOverBounds.size.x / 2, gameOverBounds.size.y / 2));
+    gameOverText.setPosition(ScreenConfig::pos(960, 540));
+
+    Text victoryText(font);
+    victoryText.setString("VICTORY! Press R to continue");
+    victoryText.setCharacterSize(72);
+    victoryText.setFillColor(Color::Yellow);
+    victoryText.setOutlineColor(Color::Black);
+    victoryText.setOutlineThickness(3);
+
+    FloatRect victoryBounds = victoryText.getLocalBounds();
+    victoryText.setOrigin(Vector2f(victoryBounds.size.x / 2, victoryBounds.size.y / 2));
+    victoryText.setPosition(ScreenConfig::pos(960, 540));
+
+    bool showVictory = false;
+    float victoryTimer = 0.0f;
 
     // ТЕКСТ ДЛЯ БУСТА "БОКСЁРСКАЯ ПЕРЧАТКА"
     Text boxingGloveText(font);
@@ -344,6 +409,7 @@ int main()
                         bossHealthBar.setActive(false);
                         scoreCounter.addScore(50000);
                         bossDefeated = true;
+                        showVictory = true;
                     }
                 }
             }
@@ -445,49 +511,28 @@ int main()
                 scoreSaved = true;
             }
 
-            Text gameOverText(font);
-            gameOverText.setString("GAME OVER! Press R to restart");
-            gameOverText.setCharacterSize(72);
-            gameOverText.setFillColor(Color::Red);
-            gameOverText.setOutlineColor(Color::Black);
-            gameOverText.setOutlineThickness(3);
-
-            FloatRect textBounds = gameOverText.getLocalBounds();
-            gameOverText.setOrigin(Vector2f(textBounds.size.x / 2, textBounds.size.y / 2));
-            gameOverText.setPosition(ScreenConfig::pos(960, 540));
-
             window.draw(gameOverText);
 
             if (Keyboard::isKeyPressed(Keyboard::Key::R)) {
-                player.reset();
-                scoreCounter.reset();
-                boss.reset();
-                bossHealthBar.setActive(false);
-                bossDefeated = false;
-                dialogShown = false;
-                waitingForChoice = false;
-                doublePoints = false;
-                doublePointsTimer = 0.0f;
-                scoreSaved = false;
-                playerChoseStop = false;
-                
-                eggRainActive = false;
-                eggRainTimer = 0.0f;
-                powerUpManager.reset();
-                extraEggsCount = 0;
-                
-                while (fallingObjects.size() > static_cast<size_t>(count_eggs)) {
-                    fallingObjects.pop_back();
-                }
-                
-                for (auto& obj : fallingObjects) {
-                    if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
-                        egg->disableRainMode();
-                    }
-                    obj->restart();
-                }
+                restartGame(player, scoreCounter, boss, bossHealthBar, bossDefeated,
+                    dialogShown, waitingForChoice, doublePoints, doublePointsTimer,
+                    scoreSaved, playerChoseStop, eggRainActive, eggRainTimer,
+                    powerUpManager, extraEggsCount, fallingObjects, count_eggs, showVictory);
             }
         }
+
+        // БЛОК ПОБЕДЫ
+        if (showVictory) {
+            window.draw(victoryText);
+
+            if (Keyboard::isKeyPressed(Keyboard::Key::R)) {
+                restartGame(player, scoreCounter, boss, bossHealthBar, bossDefeated,
+                    dialogShown, waitingForChoice, doublePoints, doublePointsTimer,
+                    scoreSaved, playerChoseStop, eggRainActive, eggRainTimer,
+                    powerUpManager, extraEggsCount, fallingObjects, count_eggs, showVictory);
+            }
+        }
+
         bossDialog.draw(window);
         window.display();
     }
