@@ -34,7 +34,6 @@ BossBullet::BossBullet(Type type, const Vector2f& startPos, const Vector2f& targ
     case Type::HoverLeft:
     case Type::HoverRight:
         hoverStartPos = startPos;
-        // Если есть задержка, начинаем с состояния задержки
         if (isDelaying) {
             velocity = Vector2f(0, 0);
             isHovering = false;
@@ -51,10 +50,11 @@ BossBullet::BossBullet(Type type, const Vector2f& startPos, const Vector2f& targ
 
 void BossBullet::initShape()
 {
-    texture = ResourceManager::getTexture(IDB_BOMB);  // bombTexture
-    shape.setSize(Vector2f(35, 35));
+    texture = ResourceManager::getTexture(IDB_BOMB);
+    Vector2f bulletSize = ScreenConfig::size(50, 50);
+    shape.setSize(bulletSize);
     shape.setTexture(&texture);
-    shape.setOrigin(Vector2f(17.5f, 17.5f));
+    shape.setOrigin(bulletSize / 2.0f);
 }
 
 void BossBullet::update(float time, const Vector2f& playerPos)
