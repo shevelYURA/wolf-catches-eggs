@@ -16,7 +16,12 @@ class Player
 
     PlayersAttack attack;
     bool attackKeyPressed;
-    void handleAttack(const RenderWindow& window);
+    void handleAttack(const sf::RenderWindow& window);
+    
+    // БУСТ "БОКСЁРСКАЯ ПЕРЧАТКА"
+    bool boxingGloveActive;
+    float boxingGloveTimer;
+    float boxingGloveDuration;
 
 public:
     Player();
@@ -35,4 +40,12 @@ public:
     PlayersAttack& getAttack() { return attack; }
 
     Vector2f getPosition() const { return wolf.getPosition(); }
+    
+    // МЕТОДЫ ДЛЯ БУСТА
+    void activateBoxingGlove();
+    bool hasBoxingGlove() const { return boxingGloveActive; }
+    int getDamageMultiplier() const { return boxingGloveActive ? 4 : 1; }
+    void updateBoxingGlove(float time);
+    float getBoxingGloveTimer() const { return boxingGloveTimer; }
+    void resetBoxingGlove() { boxingGloveActive = false; boxingGloveTimer = 0; }
 };
