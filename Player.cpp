@@ -132,4 +132,10 @@ void Player::updateBoxingGlove(float time) {
     if (boxingGloveTimer <= 0) {
         boxingGloveActive = false;
     }
+    // МЕТОД ДЛЯ ВОССТАНОВЛЕНИЯ ЗДОРОВЬЯ
+void Player::heal(int amount) {
+    health += amount;
+    if (health > 100) health = 100;
+    checkHealth();
+}
 }
