@@ -207,8 +207,24 @@ int main()
     boxingGloveText.setFillColor(Color(255, 80, 80));
     boxingGloveText.setOutlineColor(Color::Black);
     boxingGloveText.setOutlineThickness(2);
-    boxingGloveText.setPosition(ScreenConfig::pos(960, 250));
+    boxingGloveText.setPosition(ScreenConfig::pos(960, 200));
     boxingGloveText.setOrigin(Vector2f(boxingGloveText.getLocalBounds().size.x / 2, boxingGloveText.getLocalBounds().size.y / 2));
+
+    // ТЕКСТ ДЛЯ БУСТА "БУРГЕР"
+    Text burgerText(font);
+    burgerText.setCharacterSize(28);
+    burgerText.setFillColor(Color(255, 200, 100));
+    burgerText.setOutlineColor(Color::Black);
+    burgerText.setOutlineThickness(1);
+    burgerText.setPosition(ScreenConfig::pos(250, 85));
+
+    // ТЕКСТ ДЛЯ БУСТА "ЗЕЛЬЕ"
+    Text potionText(font);
+    potionText.setCharacterSize(28);
+    potionText.setFillColor(Color(200, 100, 255));
+    potionText.setOutlineColor(Color::Black);
+    potionText.setOutlineThickness(1);
+    potionText.setPosition(ScreenConfig::pos(250, 115));
 
     while (window.isOpen())
     {
@@ -343,9 +359,17 @@ int main()
                         }
                     }
                 }
-                // НОВЫЙ БУСТ: БОКСЁРСКАЯ ПЕРЧАТКА
+                // БУСТ: БОКСЁРСКАЯ ПЕРЧАТКА
                 else if (powerUp->getType() == PowerUpType::BoxingGlove) {
                     player.activateBoxingGlove();
+                }
+                // БУСТ: БУРГЕР (восстанавливает 25 HP)
+                else if (powerUp->getType() == PowerUpType::Burger) {
+                    player.heal(25);
+                }
+                // БУСТ: ЗЕЛЬЕ (восстанавливает 40 HP)
+                else if (powerUp->getType() == PowerUpType::Potion) {
+                    player.heal(40);
                 }
                 powerUp->restart();
                 break;
