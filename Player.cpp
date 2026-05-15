@@ -2,7 +2,7 @@
 #include "ResourceManager.h"
 #include "ScreenConfig.h"
 
-Player::Player() : health(100), attackKeyPressed(false)
+Player::Player() : health(100), attackKeyPressed(false), shieldCount(0)
 {
     texWolf = ResourceManager::getTexture(IDB_PNG1);
     texBasket = ResourceManager::getTexture(IDB_PNG2);
@@ -98,6 +98,7 @@ bool Player::isAlive() const { return health > 0; }
 void Player::reset()
 {
     health = 100;
+    shieldCount = 0;
     wolf.setFillColor(Color::White);
 }
 
@@ -111,5 +112,15 @@ void Player::checkHealth()
     }
     else {
         wolf.setFillColor(Color::White);
+    }
+}
+void Player::addShield() {
+    shieldCount++;
+}
+
+void Player::useShield() {
+    if (shieldCount > 0) {
+        shieldCount--;
+        wolf.setFillColor(Color::Cyan); // Мигнем синим, что щит сработал
     }
 }

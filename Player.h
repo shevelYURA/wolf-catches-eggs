@@ -12,6 +12,7 @@ class Player
     Texture texBasket;
 
     int health;
+    int shieldCount = 0;
     void checkHealth();
 
     PlayersAttack attack;
@@ -35,4 +36,7 @@ public:
     PlayersAttack& getAttack() { return attack; }
 
     Vector2f getPosition() const { return wolf.getPosition(); }
+    bool hasShield() const { return shieldCount > 0; }
+    void addShield();
+    void useShield();
 };
