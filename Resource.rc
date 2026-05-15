@@ -71,7 +71,10 @@ IDB_PNG5                PNG                     "image\\egg.png"
 IDB_PNG6                PNG                     "image\\icon.png"
 
 IDB_POWERUP             PNG                     "image\\powerup.png"
+
 IDB_BACKGROUND          PNG                     "image/fon.jpg"
+
+IDB_BOXING_GLOVE        PNG                     "image\\boxing_glove.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
