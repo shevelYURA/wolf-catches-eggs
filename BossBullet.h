@@ -31,10 +31,10 @@ private:
     Vector2f hoverStartPos;
     float hoverTimer;
     float hoverDuration;
-    float individualDelay;      // Индивидуальная задержка перед началом зависания
-    float delayTimer;           // Таймер задержки
+    float individualDelay;
+    float delayTimer;
     bool isHovering;
-    bool isDelaying;            // Состояние задержки
+    bool isDelaying;
 
     bool active;
     float speed;
