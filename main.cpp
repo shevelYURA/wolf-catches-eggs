@@ -490,6 +490,8 @@ int main()
         healthBar.draw(window);
         window.draw(bestText);
         window.draw(boostText);
+        window.draw(burgerText);
+        window.draw(potionText);
         
         powerUpManager.draw(window);
 
