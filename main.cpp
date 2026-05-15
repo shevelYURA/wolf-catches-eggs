@@ -80,6 +80,9 @@ int main()
     std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
     int extraEggsCount = 0;  // Счётчик временных яиц
+    int eggsBrokenCount = 0;       // Счётчик разбитых яиц
+    const int MAX_BROKEN_EGGS = 3; // Сколько яиц нужно разбить, чтобы щит сработал
+    int bossDamageMultiplier = 1;  // Множитель урона (по умолчанию x1)
     
     // СОЗДАНИЕ ОСНОВНЫХ ЯИЦ С 20% ШАНСОМ ЗОЛОТОГО
     for (int i = 0; i < count_eggs; ++i) {
@@ -276,13 +279,34 @@ int main()
                         }
                     }
                 }
+                // Если подобрали щит
+                else if (powerUp->getType() == PowerUpType::Shield) {
+                     player.addShield();
+                }
                 powerUp->restart();
                 break;
             }
         }
-
+        
         // ДВИЖЕНИЕ И СБОР ЯИЦ
         for (auto& obj : fallingObjects) {
+            // ПРОВЕРКА: ЕСЛИ ЯЙЦО УЖЕ УПАЛО НИЖЕ ЭКРАНА (РАЗБИЛОСЬ)
+            if (obj->isFalling() && obj->getBounds().top > ScreenConfig::scaleY * 1080) {
+                if (dynamic_cast<Egg*>(obj.get())) {
+                    eggsBrokenCount++; // Увеличиваем счетчик
+        
+                    // Если разбили лимит
+                    if (eggsBrokenCount >= MAX_BROKEN_EGGS) {
+                        if (player.hasShield()) {
+                            player.useShield();      // Щит спасает!
+                            eggsBrokenCount = 0;     // Сбрасываем счетчик
+                        }
+                        else {
+                            player.takeDamage(100);  // Смерть
+                        }
+                     }
+                 }
+            }
             obj->move(time);
             if (obj->collision(player.getBasketBounds())) {
                 if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
@@ -292,6 +316,19 @@ int main()
                     }
                     scoreCounter.addScore(points);
                     obj->restart();
+                }
+                scoreCounter.addScore(points);
+                obj->restart();
+                // ЕСЛИ ПОЙМАЛИ БОМБУ
+                else if (auto* bomb = dynamic_cast<Bomb*>(obj.get())) {
+                    if (player.hasShield()) {
+                         player.useShield(); // Щит поглощает бомбу
+                         obj->restart();
+                    }
+                    else {
+                         player.takeDamage(100); // Смерть
+                         obj->restart();
+                    }
                 }
             }
         }
@@ -330,7 +367,7 @@ int main()
 
             if (player.getAttack().isInFlight()) {
                 if (player.getAttack().getPosition().findIntersection(boss.getBounds()).has_value()) {
-                    boss.takeDamage(10);
+                    boss.takeDamage(10 * bossDamageMultiplier); // Урон теперь зависит от множителя
                     player.getAttack().stop();
 
                     if (!boss.isAlive()) {
@@ -454,6 +491,8 @@ int main()
                 eggRainTimer = 0.0f;
                 powerUpManager.reset();
                 extraEggsCount = 0;
+                eggsBrokenCount = 0;
+                bossDamageMultiplier = 1;
                 
                 // Очищаем все временные яйца
                 while (fallingObjects.size() > static_cast<size_t>(count_eggs)) {
