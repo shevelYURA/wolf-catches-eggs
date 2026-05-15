@@ -2,7 +2,8 @@
 #include "ResourceManager.h"
 #include "ScreenConfig.h"
 
-Player::Player() : health(100), attackKeyPressed(false)
+Player::Player() : health(100), attackKeyPressed(false),
+    boxingGloveActive(false), boxingGloveTimer(0), boxingGloveDuration(15.0f)
 {
     texWolf = ResourceManager::getTexture(IDB_PNG1);
     texBasket = ResourceManager::getTexture(IDB_PNG2);
@@ -17,6 +18,9 @@ Player::Player() : health(100), attackKeyPressed(false)
 
 void Player::update(float time, const RenderWindow& window)
 {
+    // Обновляем состояние буста
+    updateBoxingGlove(time);
+    
     const float SPEED = 600.0f;
     Vector2f moveRec(0.f, 0.f);
 
@@ -99,6 +103,7 @@ void Player::reset()
 {
     health = 100;
     wolf.setFillColor(Color::White);
+    resetBoxingGlove();
 }
 
 void Player::checkHealth()
@@ -111,5 +116,20 @@ void Player::checkHealth()
     }
     else {
         wolf.setFillColor(Color::White);
+    }
+}
+
+// МЕТОДЫ ДЛЯ БУСТА "БОКСЁРСКАЯ ПЕРЧАТКА"
+void Player::activateBoxingGlove() {
+    boxingGloveActive = true;
+    boxingGloveTimer = boxingGloveDuration;
+}
+
+void Player::updateBoxingGlove(float time) {
+    if (!boxingGloveActive) return;
+    
+    boxingGloveTimer -= time;
+    if (boxingGloveTimer <= 0) {
+        boxingGloveActive = false;
     }
 }
