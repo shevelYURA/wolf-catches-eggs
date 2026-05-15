@@ -15,7 +15,7 @@ private:
     float bossSpawnInterval;
 
 public:
-    PowerUpManager() : spawnTimer(0), normalSpawnInterval(25.0f), bossSpawnInterval(40.0f) {}
+    PowerUpManager() : spawnTimer(0), normalSpawnInterval(25.0f), bossSpawnInterval(15.0f) {}
 
     void update(float time, bool isBossActive) {
         spawnTimer += time;
@@ -27,7 +27,7 @@ public:
             
             // Устанавливаем следующий интервал
             if (isBossActive) {
-                bossSpawnInterval = 35.0f + (rand() % 15);
+                bossSpawnInterval = 12.0f + (rand() % 8);  // ← 12-20 секунд
             } else {
                 normalSpawnInterval = 20.0f + (rand() % 10);
             }
@@ -36,11 +36,14 @@ public:
             PowerUpType type;
             
             if (isBossActive) {
-                // Когда босс есть: 33% шанс перчатки, 33% яйцепад, 33% двойные очки
-                int randomType = rand() % 3;
-                if (randomType == 0) type = PowerUpType::EggRain;
-                else if (randomType == 1) type = PowerUpType::DoublePoints;
-                else type = PowerUpType::BoxingGlove;
+                // 50% шанс перчатки, 50% шанс других бустов
+                int randomType = rand() % 2;  // 0 или 1
+                if (randomType == 0) {
+                    type = PowerUpType::BoxingGlove;  // ← ПЕРЧАТКА
+                } else {
+                    int otherType = rand() % 2;
+                    type = (otherType == 0) ? PowerUpType::EggRain : PowerUpType::DoublePoints;
+                }
             } else {
                 // Когда босса нет: только яйцепад и двойные очки
                 int randomType = rand() % 2;
@@ -77,6 +80,6 @@ public:
         powerUps.clear();
         spawnTimer = 0;
         normalSpawnInterval = 25.0f;
-        bossSpawnInterval = 40.0f;
+        bossSpawnInterval = 15.0f;
     }
 };
