@@ -62,10 +62,6 @@ IDB_PNG1                PNG                     "image\\wolfTexture.png"
 
 IDB_PNG2                PNG                     "image\\basketTexture.png"
 
-IDB_PNG3                PNG                     "image\\bombTexture.png"
-
-IDB_PNG4                PNG                     "image\\bossTexture.png"
-
 IDB_PNG5                PNG                     "image\\egg.png"
 
 IDB_PNG6                PNG                     "image\\icon.png"
@@ -73,8 +69,11 @@ IDB_PNG6                PNG                     "image\\icon.png"
 IDB_POWERUP             PNG                     "image\\powerup.png"
 
 IDB_BACKGROUND          PNG                     "image/fon.jpg"
+
 IDB_BOSS                PNG                     "image/PETUSHARA.png"
+
 IDB_BOMB                PNG                     "image/bomb.png"
+
 IDB_BASKET              PNG                     "image/basket.png"
 
 IDB_BOXING_GLOVE        PNG                     "image\\boxing_glove.png"

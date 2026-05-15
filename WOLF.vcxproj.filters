@@ -120,9 +120,6 @@
     <Image Include="image\basketTexture.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="image\bombTexture.png">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
     <Image Include="image\bossTexture.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>

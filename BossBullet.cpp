@@ -51,7 +51,7 @@ BossBullet::BossBullet(Type type, const Vector2f& startPos, const Vector2f& targ
 
 void BossBullet::initShape()
 {
-    texture = ResourceManager::getTexture(IDB_PNG3);  // bombTexture
+    texture = ResourceManager::getTexture(IDB_BOMB);  // bombTexture
     shape.setSize(Vector2f(35, 35));
     shape.setTexture(&texture);
     shape.setOrigin(Vector2f(17.5f, 17.5f));
