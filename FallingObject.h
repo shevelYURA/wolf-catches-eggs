@@ -3,19 +3,18 @@
 using namespace sf;
 
 class FallingObject {
-    void init(int resourceId, const Vector2f& size);
 public:
     FallingObject(int resourceId, const Vector2f& size);
     virtual ~FallingObject() = default;
 
-    virtual void move(float time);
-    virtual void draw(RenderWindow& window);
-    virtual bool collision(FloatRect object);
-    virtual void restart();
+    void move(float time);
+    void draw(RenderWindow& window);
+    bool collision(FloatRect object);
+    void restart();
 
     FloatRect getBounds() const;
     bool isFalling() const;
-    void setColor(const sf::Color& color);
+    void setColor(const Color& color);
     
     // НОВЫЕ МЕТОДЫ ДЛЯ БУСТА
     void setPosition(const Vector2f& pos) { shape.setPosition(pos); }

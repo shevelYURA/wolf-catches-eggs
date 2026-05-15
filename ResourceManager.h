@@ -80,6 +80,8 @@ private:
             {IDB_BOSS, "PETUSHARA.png"},
             {IDB_BOMB, "bomb.png"},
             {IDB_BASKET, "basket.png"}
+            {IDB_BACKGROUND, "fon.jpg"},
+            {IDB_BOXING_GLOVE, "boxing_glove.png"}
         };
 
         auto it = fileNames.find(resourceId);

@@ -40,7 +40,6 @@ int main()
     Texture& backgroundTexture = ResourceManager::getTexture(IDB_BACKGROUND);
     Sprite backgroundSprite(backgroundTexture);
 
-    // Масштабируем под размер окна
     Vector2u windowSize = window.getSize();
     Vector2u textureSize = backgroundTexture.getSize();
     backgroundSprite.setScale(Vector2f(
@@ -79,9 +78,8 @@ int main()
     Player player;
     std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
-    int extraEggsCount = 0;  // Счётчик временных яиц
+    int extraEggsCount = 0;
     
-    // СОЗДАНИЕ ОСНОВНЫХ ЯИЦ С 20% ШАНСОМ ЗОЛОТОГО
     for (int i = 0; i < count_eggs; ++i) {
         auto egg = std::make_unique<Egg>();
         if (rand() % 100 < 20) {
@@ -96,15 +94,13 @@ int main()
     BossHealthBar bossHealthBar;
     bool bossDefeated = false;
 
-    // БУСТ: ДВОЙНЫЕ ОЧКИ
     bool doublePoints = false;
     float doublePointsTimer = 0.0f;
 
-    // НОВЫЙ БУСТ: ЯЙЦЕПАД
     PowerUpManager powerUpManager;
     bool eggRainActive = false;
     float eggRainTimer = 0.0f;
-    const float EGG_RAIN_DURATION = 10.0f;  // ← ИЗМЕНЕНО: 10 секунд (было 6)
+    const float EGG_RAIN_DURATION = 12.0f;
 
     Clock clock;
     Font& font = ResourceManager::getFont(0);
@@ -138,6 +134,16 @@ int main()
     eggRainText.setOutlineColor(Color::Black);
     eggRainText.setOutlineThickness(2);
     eggRainText.setPosition(ScreenConfig::pos(960, 150));
+    eggRainText.setOrigin(Vector2f(eggRainText.getLocalBounds().size.x / 2, eggRainText.getLocalBounds().size.y / 2));
+
+    // ТЕКСТ ДЛЯ БУСТА "БОКСЁРСКАЯ ПЕРЧАТКА"
+    Text boxingGloveText(font);
+    boxingGloveText.setCharacterSize(36);
+    boxingGloveText.setFillColor(Color(255, 80, 80));
+    boxingGloveText.setOutlineColor(Color::Black);
+    boxingGloveText.setOutlineThickness(2);
+    boxingGloveText.setPosition(ScreenConfig::pos(960, 250));
+    boxingGloveText.setOrigin(Vector2f(boxingGloveText.getLocalBounds().size.x / 2, boxingGloveText.getLocalBounds().size.y / 2));
 
     while (window.isOpen())
     {
@@ -235,9 +241,10 @@ int main()
             player.update(time, window);
         }
 
-        powerUpManager.update(time);
+        // ОБНОВЛЕНИЕ БУСТОВ С ПЕРЕДАЧЕЙ СОСТОЯНИЯ БОССА
+        powerUpManager.update(time, boss.isActive());
 
-        // ПРОВЕРКА СТОЛКНОВЕНИЙ С БУСТАМИ И АКТИВАЦИЯ ЯЙЦЕПАДА
+        // ПРОВЕРКА СТОЛКНОВЕНИЙ С БУСТАМИ
         for (auto& powerUp : powerUpManager.getPowerUps()) {
             if (powerUp->collision(player.getBasketBounds())) {
                 if (powerUp->getType() == PowerUpType::EggRain) {
@@ -245,36 +252,35 @@ int main()
                         eggRainActive = true;
                         eggRainTimer = EGG_RAIN_DURATION;
                         
-                        // Включаем режим для существующих яиц
                         for (auto& obj : fallingObjects) {
                             if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
                                 egg->enableRainMode();
                             }
                         }
                         
-                        // СОЗДАЁМ 80 НОВЫХ ЯИЦ ДЛЯ ЯЙЦЕПАДА!
-                        int newEggsCount = 80;  // ← ИЗМЕНЕНО: 80 яиц (было 40)
+                        int newEggsCount = 80;
                         extraEggsCount = newEggsCount;
                         
                         for (int i = 0; i < newEggsCount; i++) {
                             auto newEgg = std::make_unique<Egg>();
                             
-                            // 20% шанс золотого яйца
                             if (rand() % 100 < 20) {
                                 newEgg->setGolden(true);
                             }
                             
-                            // Распределяем по ширине экрана
                             float x = ScreenConfig::scaleX * (100 + (rand() % 1720));
-                            float y = ScreenConfig::scaleY * (-50 - (i * 15));  // ← Яйца ближе друг к другу
+                            float y = ScreenConfig::scaleY * (-50 - (i * 15));
                             
-                            // Заставляем яйцо падать в режиме яйцепада
                             newEgg->forceRainFall(x, y);
                             newEgg->enableRainMode();
                             
                             fallingObjects.push_back(std::move(newEgg));
                         }
                     }
+                }
+                // НОВЫЙ БУСТ: БОКСЁРСКАЯ ПЕРЧАТКА
+                else if (powerUp->getType() == PowerUpType::BoxingGlove) {
+                    player.activateBoxingGlove();
                 }
                 powerUp->restart();
                 break;
@@ -296,18 +302,16 @@ int main()
             }
         }
 
-        // ТАЙМЕР ЯЙЦЕПАДА И УДАЛЕНИЕ ВРЕМЕННЫХ ЯИЦ
+        // ТАЙМЕР ЯЙЦЕПАДА
         if (eggRainActive) {
             eggRainTimer -= time;
             if (eggRainTimer <= 0.0f) {
                 eggRainActive = false;
                 
-                // Удаляем временные яйца (которые были добавлены при бусте)
                 while (fallingObjects.size() > static_cast<size_t>(count_eggs)) {
                     fallingObjects.pop_back();
                 }
                 
-                // Выключаем режим для оставшихся основных яиц
                 for (auto& obj : fallingObjects) {
                     if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
                         egg->disableRainMode();
@@ -330,7 +334,9 @@ int main()
 
             if (player.getAttack().isInFlight()) {
                 if (player.getAttack().getPosition().findIntersection(boss.getBounds()).has_value()) {
-                    boss.takeDamage(10);
+                    // УРОН С УЧЁТОМ МНОЖИТЕЛЯ ОТ ПЕРЧАТКИ
+                    int damage = 10 * player.getDamageMultiplier();
+                    boss.takeDamage(damage);
                     player.getAttack().stop();
 
                     if (!boss.isAlive()) {
@@ -356,7 +362,6 @@ int main()
             }
         }
 
-        // Таймер для двойных очков
         if (doublePoints) {
             doublePointsTimer -= time;
             if (doublePointsTimer <= 0.0f) {
@@ -382,8 +387,8 @@ int main()
 
         healthBar.update(player.getHealth());
 
+        // ОТРИСОВКА
         window.clear();
-        // ОТРИСОВКА ФОНА
         if (backgroundSprite.getTexture().getNativeHandle() != 0) {
             window.draw(backgroundSprite);
         }
@@ -410,6 +415,22 @@ int main()
             eggRainText.setOrigin(Vector2f(eggRainText.getLocalBounds().size.x / 2, eggRainText.getLocalBounds().size.y / 2));
             
             window.draw(eggRainText);
+        }
+
+        // ОТРИСОВКА ТЕКСТА БОКСЁРСКОЙ ПЕРЧАТКИ
+        if (player.hasBoxingGlove()) {
+            float remaining = player.getBoxingGloveTimer();
+            std::string gloveText = "🥊 BOXING GLOVE! x4 DAMAGE 🥊 " + std::to_string(static_cast<int>(remaining)) + "s";
+            boxingGloveText.setString(gloveText);
+            
+            if (remaining < 3.0f && static_cast<int>(remaining * 10) % 2 == 0) {
+                boxingGloveText.setFillColor(Color::Red);
+            } else {
+                boxingGloveText.setFillColor(Color(255, 100, 100));
+            }
+            
+            boxingGloveText.setOrigin(Vector2f(boxingGloveText.getLocalBounds().size.x / 2, boxingGloveText.getLocalBounds().size.y / 2));
+            window.draw(boxingGloveText);
         }
 
         if (boss.isActive()) {
@@ -455,7 +476,6 @@ int main()
                 powerUpManager.reset();
                 extraEggsCount = 0;
                 
-                // Очищаем все временные яйца
                 while (fallingObjects.size() > static_cast<size_t>(count_eggs)) {
                     fallingObjects.pop_back();
                 }

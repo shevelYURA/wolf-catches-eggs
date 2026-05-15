@@ -9,6 +9,8 @@
 #define IDB_PNG5                        107
 #define IDB_PNG6                        108
 #define IDB_POWERUP                     109
+#define IDB_BACKGROUND                  110
+#define IDB_BOXING_GLOVE                111
 #define FONT_ARCADE                     201
 #define IDB_BOSS                        119
 #define IDB_BOMB                        110
@@ -23,4 +25,3 @@
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
-#define IDB_BACKGROUND  20 
