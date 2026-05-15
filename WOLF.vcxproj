@@ -179,7 +179,6 @@
   <ItemGroup>
     <Image Include="bitmap1.bmp" />
     <Image Include="image\basketTexture.png" />
-    <Image Include="image\bombTexture.png" />
     <Image Include="image\bossTexture.png" />
     <Image Include="image\egg.png" />
     <Image Include="image\eggsTexture.png" />

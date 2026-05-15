@@ -6,16 +6,9 @@ FallingObject::FallingObject(int resourceId, const Vector2f& size) {
     texture = ResourceManager::getTexture(resourceId);
     shape.setSize(size);
     shape.setTexture(&texture);
-    speed = 70.0f;
-    restart();
-}
-
-void FallingObject::init(int resourceId, const Vector2f& size) {
-    texture = ResourceManager::getTexture(resourceId);
-    shape.setSize(size);
-    shape.setTexture(&texture);
     shape.setFillColor(sf::Color::White);
     speed = 70.0f;
+    restart();
 }
 
 void FallingObject::move(float time) {
@@ -78,6 +71,6 @@ bool FallingObject::isFalling() const {
     return currentState == falling;
 }
 
-void FallingObject::setColor(const sf::Color& color) {
+void FallingObject::setColor(const Color& color) {
     shape.setFillColor(color);
 }

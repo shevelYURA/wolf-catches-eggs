@@ -70,14 +70,15 @@ private:
         static map<int, string> fileNames = {
             {IDB_PNG1, "wolf.png"},
             {IDB_PNG2, "basket.png"},
-            {IDB_PNG3, "bomb.png"},
             {IDB_PNG4, "boss.png"},
             {IDB_PNG5, "egg.png"},
             {IDB_PNG6, "icon.png"},
             {IDB_POWERUP, "powerup.png"},
-            {IDB_PNG6, "icon.png"},
             {IDB_BACKGROUND, "fon.jpg"},
-            {IDB_BOXING_GLOVE, "boxing_glove.png"}
+            {IDB_BOSS, "PETUSHARA.png"},
+            {IDB_BOMB, "bomb.png"},
+            {IDB_BASKET, "basket.png"},
+            {IDB_BOXING_GLOVE, "boxing_glove.png"},
         };
 
         auto it = fileNames.find(resourceId);

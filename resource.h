@@ -4,7 +4,6 @@
 //
 #define IDB_PNG1                        103
 #define IDB_PNG2                        104
-#define IDB_PNG3                        105
 #define IDB_PNG4                        106
 #define IDB_PNG5                        107
 #define IDB_PNG6                        108
@@ -12,7 +11,9 @@
 #define IDB_BACKGROUND                  110
 #define IDB_BOXING_GLOVE                111
 #define FONT_ARCADE                     201
-
+#define IDB_BOSS                        119
+#define IDB_BOMB                        113
+#define IDB_BASKET                      112
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
