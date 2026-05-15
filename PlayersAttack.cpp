@@ -1,10 +1,11 @@
 #include "PlayersAttack.h"
+#include "screenConfig.h"
 
 PlayersAttack::PlayersAttack()
 {
 	atk_Egg.setFillColor(sf::Color::White);
-	atk_Egg.setRadius(10);
-	atk_Egg.setOrigin({ 5, 5 });
+	atk_Egg.setRadius(10 * ScreenConfig::scaleX);
+	atk_Egg.setOrigin({ 5 * ScreenConfig::scaleX, 5 * ScreenConfig::scaleY });
 }
 
 void PlayersAttack::throwEgg(float startX, float startY,
