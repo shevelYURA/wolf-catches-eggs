@@ -41,7 +41,7 @@ void Player::update(float time, const RenderWindow& window)
         wolf.setPosition(Vector2f(0, pos.y));
     }
 
-    basket.setPosition(Vector2f(wolf.getPosition().x+70, wolf.getPosition().y + 30));
+    basket.setPosition(Vector2f(wolf.getPosition().x + 85, wolf.getPosition().y + 50));
 
     handleAttack(window);
 
@@ -97,6 +97,13 @@ void Player::takeDamage(int damage)
     checkHealth();
 }
 
+void Player::heal(int amount)
+{
+    health += amount;
+    if (health > 100) health = 100;
+    checkHealth();
+}
+
 bool Player::isAlive() const { return health > 0; }
 
 void Player::reset()
@@ -132,10 +139,4 @@ void Player::updateBoxingGlove(float time) {
     if (boxingGloveTimer <= 0) {
         boxingGloveActive = false;
     }
-    // МЕТОД ДЛЯ ВОССТАНОВЛЕНИЯ ЗДОРОВЬЯ
-void Player::heal(int amount) {
-    health += amount;
-    if (health > 100) health = 100;
-    checkHealth();
-}
 }
