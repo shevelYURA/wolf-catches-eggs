@@ -14,19 +14,19 @@ Boss::Boss() : health(100), active(false), moveSpeed(150.0f), directionChangeTim
     body.setPosition(ScreenConfig::pos(960, 200));
 
     // Глаза
-    eyeLeft.setRadius(10);
+    eyeLeft.setRadius(10 * ScreenConfig::scaleX);
     eyeLeft.setFillColor(Color::White);
     eyeLeft.setOrigin(Vector2f(10, 10));
 
-    eyeRight.setRadius(10);
+    eyeRight.setRadius(10 * ScreenConfig::scaleX);
     eyeRight.setFillColor(Color::White);
     eyeRight.setOrigin(Vector2f(10, 10));
 
-    pupilLeft.setRadius(3);
+    pupilLeft.setRadius(3 * ScreenConfig::scaleX);
     pupilLeft.setFillColor(Color::Black);
     pupilLeft.setOrigin(Vector2f(3, 3));
 
-    pupilRight.setRadius(3);
+    pupilRight.setRadius(3 * ScreenConfig::scaleX);
     pupilRight.setFillColor(Color::Black);
     pupilRight.setOrigin(Vector2f(3, 3));
 
