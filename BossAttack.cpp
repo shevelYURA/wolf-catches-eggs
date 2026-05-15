@@ -82,7 +82,7 @@ void BossAttack::performHomingSalvo(const Vector2f& bossPos, const Vector2f& pla
 
 void BossAttack::performLeftBombard(const Vector2f& bossPos)
 {
-    float startY = 440;
+    float startY = ScreenConfig::scaleY * 440;
     int bombCount = 20;
     float safeZoneStart = ScreenConfig::scaleX * 1400.0f;
     std::vector<float> xPositions;

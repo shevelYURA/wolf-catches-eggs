@@ -23,6 +23,6 @@ public:
     }
 
     static unsigned int fontSize(float size) {
-        return static_cast<unsigned int>(size * std::min(scaleX, scaleY));
+        return static_cast<unsigned int>(size * ((scaleX + scaleY) / 2.0f));
     }
 };

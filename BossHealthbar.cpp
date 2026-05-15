@@ -8,16 +8,14 @@ BossHealthBar::BossHealthBar() : healthText(nullptr), active(false)
 
     healthText = new Text(font);
 
-    healthBarBackground.setSize(Vector2f(600, 40));
     healthBarBackground.setFillColor(Color(100, 100, 100));
     healthBarBackground.setOutlineColor(Color::Black);
     healthBarBackground.setOutlineThickness(2);
 
-    healthBarForeground.setSize(Vector2f(600, 40));
     healthBarForeground.setFillColor(Color(200, 50, 50));
 
     healthText->setString("BOSS Health: 1000/1000");
-    healthText->setCharacterSize(36);
+    healthText->setCharacterSize(ScreenConfig::fontSize(36));
     healthText->setFillColor(Color::White);
     healthText->setOutlineColor(Color::Black);
     healthText->setOutlineThickness(1);
@@ -35,10 +33,14 @@ void BossHealthBar::update(int currentHealth, int maxHealth)
     if (!active) return;
 
     float healthPercent = static_cast<float>(currentHealth) / maxHealth;
-    healthBarForeground.setSize(Vector2f(600 * healthPercent, 40));
+    Vector2f barSize = ScreenConfig::size(600, 40);
+
+    healthBarBackground.setSize(barSize);
+    healthBarForeground.setSize(Vector2f(barSize.x * healthPercent, barSize.y));
 
     std::string healthString = "BOSS Health: " + std::to_string(currentHealth) + "/" + std::to_string(maxHealth);
     healthText->setString(healthString);
+    healthText->setCharacterSize(ScreenConfig::fontSize(36));
 
     updatePosition();
 }
@@ -46,6 +48,8 @@ void BossHealthBar::update(int currentHealth, int maxHealth)
 void BossHealthBar::draw(RenderWindow& window)
 {
     if (!active) return;
+
+    updatePosition();
 
     window.draw(healthBarBackground);
     window.draw(healthBarForeground);

@@ -9,7 +9,7 @@ Scorer::Scorer() : score(0), scoreText(nullptr)
     scoreText = new Text(font);
 
     scoreText->setString("Score     0");
-    scoreText->setCharacterSize(static_cast<unsigned int>(36 * ScreenConfig::scaleY));
+    scoreText->setCharacterSize(ScreenConfig::fontSize(36));
     scoreText->setFillColor(Color::White);
     scoreText->setOutlineColor(Color::Black);
     scoreText->setOutlineThickness(2);

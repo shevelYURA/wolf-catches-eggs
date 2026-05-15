@@ -1,13 +1,14 @@
 #pragma once
 #include "FallingObject.h"
 #include "resource.h"
+#include "screenConfig.h"
 
 class Egg : public FallingObject {
 private:
     bool isGolden;
 
 public:
-    Egg() : FallingObject(IDB_PNG5, Vector2f(40, 35)), isGolden(false) {}
+    Egg() : FallingObject(IDB_PNG5, ScreenConfig::size(40, 35)), isGolden(false) {}
     
     void setGolden(bool golden) {
         isGolden = golden;

@@ -70,22 +70,26 @@ void Boss::updateEyes(const Vector2f& playerPosition)
         toPlayer /= length;
 
         // Зрачки смотрят на игрока
-        float eyeOffsetX = toPlayer.x * 8;
-        float eyeOffsetY = toPlayer.y * 8;
+        float eyeOffsetX = toPlayer.x * (8 * ScreenConfig::scaleX);
+        float eyeOffsetY = toPlayer.y * (8 * ScreenConfig::scaleY);
 
-        pupilLeft.setPosition(Vector2f(bossPos.x - 15 + eyeOffsetX, bossPos.y - 25 + eyeOffsetY));
-        pupilRight.setPosition(Vector2f(bossPos.x + 15 + eyeOffsetX, bossPos.y - 25 + eyeOffsetY));
+        pupilLeft.setPosition(Vector2f(bossPos.x - 15 * ScreenConfig::scaleX + eyeOffsetX,
+            bossPos.y - 25 * ScreenConfig::scaleY + eyeOffsetY));
+        pupilRight.setPosition(Vector2f(bossPos.x + 15 * ScreenConfig::scaleX + eyeOffsetX,
+            bossPos.y - 25 * ScreenConfig::scaleY + eyeOffsetY));
 
         // Белки глаз
-        eyeLeft.setPosition(Vector2f(bossPos.x - 15, bossPos.y - 25));
-        eyeRight.setPosition(Vector2f(bossPos.x + 15, bossPos.y - 25));
+        eyeLeft.setPosition(Vector2f(bossPos.x - 15 * ScreenConfig::scaleX,
+            bossPos.y - 25 * ScreenConfig::scaleY));
+        eyeRight.setPosition(Vector2f(bossPos.x + 15 * ScreenConfig::scaleX,
+            bossPos.y - 25 * ScreenConfig::scaleY));
     }
     else {
         // Если игрок на той же позиции, просто центрируем зрачки
-        pupilLeft.setPosition(Vector2f(bossPos.x - 35, bossPos.y - 25));
-        pupilRight.setPosition(Vector2f(bossPos.x + 35, bossPos.y - 25));
-        eyeLeft.setPosition(Vector2f(bossPos.x - 35, bossPos.y - 25));
-        eyeRight.setPosition(Vector2f(bossPos.x + 35, bossPos.y - 25));
+        pupilLeft.setPosition(Vector2f(bossPos.x - 35 * ScreenConfig::scaleX, bossPos.y - 25 * ScreenConfig::scaleY));
+        pupilRight.setPosition(Vector2f(bossPos.x + 35 * ScreenConfig::scaleX, bossPos.y - 25 * ScreenConfig::scaleY));
+        eyeLeft.setPosition(Vector2f(bossPos.x - 35 * ScreenConfig::scaleX, bossPos.y - 25 * ScreenConfig::scaleY));
+        eyeRight.setPosition(Vector2f(bossPos.x + 35 * ScreenConfig::scaleX, bossPos.y - 25 * ScreenConfig::scaleY));
     }
 }
 

@@ -9,18 +9,19 @@ HealthBar::HealthBar() : healthText(nullptr)
     healthText = new Text(font);
 
     // Настройка фона полоски здоровья
-    healthBarBackground.setSize(Vector2f(400, 30));
+    Vector2f barSize = ScreenConfig::size(400, 30);
+    healthBarBackground.setSize(barSize);
     healthBarBackground.setFillColor(Color(100, 100, 100));
     healthBarBackground.setOutlineColor(Color::Black);
     healthBarBackground.setOutlineThickness(2);
 
     // Настройка полоски здоровья
-    healthBarForeground.setSize(Vector2f(400, 30));
+    healthBarForeground.setSize(barSize);
     healthBarForeground.setFillColor(Color::Green);
 
     // Настройка текста здоровья
     healthText->setString("Health: 100/100");
-    healthText->setCharacterSize(static_cast<unsigned int>(36 * ScreenConfig::scaleY));
+    healthText->setCharacterSize(ScreenConfig::fontSize(36));
     healthText->setFillColor(Color::White);
     healthText->setOutlineColor(Color::Black);
     healthText->setOutlineThickness(1);
@@ -36,7 +37,8 @@ HealthBar::~HealthBar()
 void HealthBar::update(int currentHealth, int maxHealth)
 {
     float healthPercent = static_cast<float>(currentHealth) / maxHealth;
-    healthBarForeground.setSize(Vector2f(400 * healthPercent, 30));
+    Vector2f barSize = ScreenConfig::size(400, 30);
+    healthBarForeground.setSize(Vector2f(barSize.x * healthPercent, barSize.y));
 
     if (healthPercent > 0.6f) {
         healthBarForeground.setFillColor(Color::Green);

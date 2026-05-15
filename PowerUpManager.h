@@ -69,7 +69,7 @@ public:
             
             auto powerUp = std::make_unique<PowerUp>(type);
             float randomX = static_cast<float>(rand() % static_cast<int>(ScreenConfig::scaleX * 1800) + 50);
-            powerUp->setPosition(Vector2f(randomX, -50));
+            powerUp->setPosition(Vector2f(randomX, -50 * ScreenConfig::scaleY));
             powerUps.push_back(std::move(powerUp));
         }
 
