@@ -14,7 +14,10 @@ private:
 
 public:
     PowerUp(PowerUpType t = PowerUpType::EggRain) 
-        : FallingObject(IDB_POWERUP, Vector2f(40, 40)), type(t) {}
+        : FallingObject(
+            (t == PowerUpType::BoxingGlove) ? IDB_BOXING_GLOVE : IDB_POWERUP,
+            Vector2f(40, 40)
+          ), type(t) {}
 
     PowerUpType getType() const { return type; }
     void setType(PowerUpType t) { type = t; }
