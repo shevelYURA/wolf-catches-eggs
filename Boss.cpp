@@ -6,7 +6,7 @@
 
 Boss::Boss() : health(100), active(false), moveSpeed(150.0f), directionChangeTimer(0)
 {
-    texBoss = ResourceManager::getTexture(IDB_PNG4);
+    texBoss = ResourceManager::getTexture(IDB_BOSS);
     body.setTexture(&texBoss);
 
     body.setSize(ScreenConfig::size(120, 120));
