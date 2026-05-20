@@ -108,7 +108,7 @@ int main()
 
     Text enterNameText(font);
     enterNameText.setString("ENTER YOUR NAME: " + inputName + "_");
-    enterNameText.setCharacterSize(ScreenConfig::fontSize(48));
+    enterNameText.setCharacterSize(ScreenConfig::fontSize(36));
     enterNameText.setFillColor(Color::White);
     enterNameText.setOutlineColor(Color::Black);
     enterNameText.setOutlineThickness(2);
@@ -116,21 +116,21 @@ int main()
     enterNameText.setOrigin(Vector2f(enterNameText.getLocalBounds().size.x / 2, enterNameText.getLocalBounds().size.y / 2));
 
     Text bestText(font);
-    bestText.setCharacterSize(ScreenConfig::fontSize(28));
+    bestText.setCharacterSize(ScreenConfig::fontSize(24));
     bestText.setFillColor(Color::Yellow);
     bestText.setOutlineColor(Color::Black);
     bestText.setOutlineThickness(1);
-    bestText.setPosition(ScreenConfig::pos(250, 25));
+    bestText.setPosition(ScreenConfig::pos(20, 20));
 
     Text boostText(font);
-    boostText.setCharacterSize(ScreenConfig::fontSize(28));
+    boostText.setCharacterSize(ScreenConfig::fontSize(24));
     boostText.setFillColor(Color(255, 215, 0));
     boostText.setOutlineColor(Color::Black);
     boostText.setOutlineThickness(1);
     boostText.setPosition(ScreenConfig::pos(250, 55));
 
     Text eggRainText(font);
-    eggRainText.setCharacterSize(ScreenConfig::fontSize(48));
+    eggRainText.setCharacterSize(ScreenConfig::fontSize(36));
     eggRainText.setFillColor(Color(255, 100, 255));
     eggRainText.setOutlineColor(Color::Black);
     eggRainText.setOutlineThickness(2);
@@ -139,7 +139,7 @@ int main()
 
     Text gameOverText(font);
     gameOverText.setString("GAME OVER! Press R to restart");
-    gameOverText.setCharacterSize(ScreenConfig::fontSize(72));
+    gameOverText.setCharacterSize(ScreenConfig::fontSize(50));
     gameOverText.setFillColor(Color::Red);
     gameOverText.setOutlineColor(Color::Black);
     gameOverText.setOutlineThickness(3);
@@ -159,7 +159,7 @@ int main()
 
     // ТЕКСТ ДЛЯ БУСТА "БУРГЕР"
     Text burgerText(font);
-    burgerText.setCharacterSize(ScreenConfig::fontSize(28));
+    burgerText.setCharacterSize(ScreenConfig::fontSize(24));
     burgerText.setFillColor(Color(255, 200, 100));
     burgerText.setOutlineColor(Color::Black);
     burgerText.setOutlineThickness(1);
@@ -167,7 +167,7 @@ int main()
 
     // ТЕКСТ ДЛЯ БУСТА "ЗЕЛЬЕ"
     Text potionText(font);
-    potionText.setCharacterSize(ScreenConfig::fontSize(28));
+    potionText.setCharacterSize(ScreenConfig::fontSize(24));
     potionText.setFillColor(Color(200, 100, 255));
     potionText.setOutlineColor(Color::Black);
     potionText.setOutlineThickness(1);

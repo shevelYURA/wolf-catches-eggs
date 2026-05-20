@@ -8,12 +8,12 @@ Scorer::Scorer() : score(0), scoreText(nullptr)
 
     scoreText = new Text(font);
 
-    scoreText->setString("Score     0");
-    scoreText->setCharacterSize(ScreenConfig::fontSize(36));
+    scoreText->setString("Score: 0");
+    scoreText->setCharacterSize(ScreenConfig::fontSize(26));
     scoreText->setFillColor(Color::White);
     scoreText->setOutlineColor(Color::Black);
     scoreText->setOutlineThickness(2);
-    scoreText->setPosition(ScreenConfig::pos(20, 20));
+    scoreText->setPosition(ScreenConfig::pos(20, 60));
 }
 
 Scorer::~Scorer()
@@ -48,6 +48,6 @@ int Scorer::getScore() const
 void Scorer::updateText()
 {
     if (scoreText) {
-        scoreText->setString("Score     " + std::to_string(score));
+        scoreText->setString("Score: " + std::to_string(score));
     }
 }

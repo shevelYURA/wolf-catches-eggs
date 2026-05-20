@@ -21,7 +21,7 @@ HealthBar::HealthBar() : healthText(nullptr)
 
     // Настройка текста здоровья
     healthText->setString("Health: 100/100");
-    healthText->setCharacterSize(ScreenConfig::fontSize(36));
+    healthText->setCharacterSize(ScreenConfig::fontSize(24));
     healthText->setFillColor(Color::White);
     healthText->setOutlineColor(Color::Black);
     healthText->setOutlineThickness(1);
@@ -68,5 +68,5 @@ void HealthBar::updatePosition()
     Vector2f position = ScreenConfig::pos(1500, 20);
     healthBarBackground.setPosition(position);
     healthBarForeground.setPosition(position);
-    healthText->setPosition(ScreenConfig::pos(1500, 60));
+    healthText->setPosition(ScreenConfig::pos(1550, 20));
 }

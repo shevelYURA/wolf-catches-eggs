@@ -87,7 +87,7 @@ IDB_POTION               PNG                     "image\\potion.png"
 // RCDATA
 //
 
-FONT_ARCADE              FONT                     "image\\ARCADECLASSIC.ttf"
+FONT_ARCADE              FONT                     "image\\ArcadeJeu-Regular.otf"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

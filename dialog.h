@@ -67,7 +67,7 @@ public:
         // Текст сообщения
         messageText.setFont(font);
         messageText.setString("Boss Vegan says:\n\n\"Stop stealing eggs from chickens!\"");
-        messageText.setCharacterSize(static_cast<unsigned int>(32 * ScreenConfig::scaleY));
+        messageText.setCharacterSize(ScreenConfig::fontSize(24));
         messageText.setFillColor(Color::White);
         messageText.setOutlineColor(Color::Black);
         messageText.setOutlineThickness(1);
@@ -76,14 +76,14 @@ public:
         // Текст кнопок
         stopText.setFont(font);
         stopText.setString("STOP");
-        stopText.setCharacterSize(static_cast<unsigned int>(28 * ScreenConfig::scaleY));
+        stopText.setCharacterSize(ScreenConfig::fontSize(24));
         stopText.setFillColor(Color::White);
         stopText.setOutlineColor(Color::Black);
         stopText.setOutlineThickness(1);
 
         continueText.setFont(font);
         continueText.setString("CONTINUE");
-        continueText.setCharacterSize(static_cast<unsigned int>(28 * ScreenConfig::scaleY));
+        continueText.setCharacterSize(ScreenConfig::fontSize(24));
         continueText.setFillColor(Color::White);
         continueText.setOutlineColor(Color::Black);
         continueText.setOutlineThickness(1);
@@ -97,11 +97,11 @@ public:
 
         FloatRect stopBounds = stopText.getLocalBounds();
         stopText.setOrigin(Vector2f(stopBounds.size.x / 2, stopBounds.size.y / 2));
-        stopText.setPosition(ScreenConfig::pos(760, 610));
+        stopText.setPosition(ScreenConfig::pos(760, 615));
 
         FloatRect contBounds = continueText.getLocalBounds();
         continueText.setOrigin(Vector2f(contBounds.size.x / 2, contBounds.size.y / 2));
-        continueText.setPosition(ScreenConfig::pos(1160, 610));
+        continueText.setPosition(ScreenConfig::pos(1160, 615));
     }
 
     void show() {
