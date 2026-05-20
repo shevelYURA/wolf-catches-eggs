@@ -93,6 +93,7 @@ int main()
     Boss boss;
     BossHealthBar bossHealthBar;
     bool bossDefeated = false;
+    int nextBossScore = 5000;
 
     bool doublePoints = false;
     float doublePointsTimer = 0.0f;
@@ -255,6 +256,15 @@ int main()
             waitingForChoice = true;
         }
 
+        if (!boss.isActive() && !dialogShown && bossDefeated) {
+            if (scoreCounter.getScore() >= nextBossScore) {
+                boss.activate();
+                bossHealthBar.setActive(true);
+                bossDefeated = false;
+                dialogShown = false;
+            }
+        }
+
         if (bossDialog.isActive()) {
             bossDialog.handleInput(window);
         }
@@ -377,6 +387,8 @@ int main()
                         bossHealthBar.setActive(false);
                         scoreCounter.addScore(50000);
                         bossDefeated = true;
+                        nextBossScore = scoreCounter.getScore() + 5000;
+                        dialogShown = false;
                     }
                 }
             }
@@ -499,6 +511,8 @@ int main()
                 eggRainTimer = 0.0f;
                 powerUpManager.reset();
                 extraEggsCount = 0;
+
+                nextBossScore = 5000;
 
                 while (fallingObjects.size() > static_cast<size_t>(count_eggs)) {
                     fallingObjects.pop_back();
