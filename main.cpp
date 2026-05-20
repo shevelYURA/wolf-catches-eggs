@@ -17,7 +17,6 @@
 #include "PlayerNameManager.h"
 #include "screenConfig.h"
 #include "PowerUpManager.h"
-
 using namespace sf;
 
 void restartGame(Player& player, Scorer& scoreCounter, Boss& boss,
@@ -225,11 +224,102 @@ int main()
     potionText.setOutlineColor(Color::Black);
     potionText.setOutlineThickness(1);
     potionText.setPosition(ScreenConfig::pos(250, 115));
+    // ========== МЕНЮ ==========
+    bool inMenu = true;
+    bool showLeaderboard = false;
+    std::vector<sf::Text> leaderboardLines;
 
+    sf::Text startText(font);
+    startText.setString("START");
+    startText.setCharacterSize(48);
+    startText.setFillColor(Color::White);
+    startText.setOutlineColor(Color::Black);
+    startText.setOutlineThickness(3);
+    startText.setPosition({ 960, 400 });
+    startText.setOrigin({ startText.getLocalBounds().size.x / 2, startText.getLocalBounds().size.y / 2 });
+
+    sf::Text leaderText(font);
+    leaderText.setString("LEADERBOARD");
+    leaderText.setCharacterSize(36);
+    leaderText.setFillColor(Color::White);
+    leaderText.setOutlineColor(Color::Black);
+    leaderText.setOutlineThickness(3);
+    leaderText.setPosition({ 960, 520 });
+    leaderText.setOrigin({ leaderText.getLocalBounds().size.x / 2, leaderText.getLocalBounds().size.y / 2 });
+
+    sf::Text exitText(font);
+    exitText.setString("EXIT");
+    exitText.setCharacterSize(40);
+    exitText.setFillColor(Color::White);
+    exitText.setOutlineColor(Color::Black);
+    exitText.setOutlineThickness(3);
+    exitText.setPosition({ 960, 680 });
+    exitText.setOrigin({ exitText.getLocalBounds().size.x / 2, exitText.getLocalBounds().size.y / 2 });
     while (window.isOpen())
     {
         float time = clock.getElapsedTime().asMicroseconds() / 600000.0f;
         clock.restart();
+        // МЕНЮ: если включено, показываем меню и не запускаем игру
+        if (inMenu) {
+            while (const std::optional event = window.pollEvent())
+            {
+                if (event->is<Event::Closed>())
+                    window.close();
+
+                if (event->is<Event::MouseButtonPressed>()) {
+                    sf::Vector2i mouse = sf::Mouse::getPosition(window);
+                    sf::Vector2f mousePos(static_cast<float>(mouse.x), static_cast<float>(mouse.y));
+
+                    if (startText.getGlobalBounds().contains(mousePos)) {
+                        inMenu = false;
+                        showLeaderboard = false;
+                    }
+                    else if (leaderText.getGlobalBounds().contains(mousePos)) {
+                        // Переключаем показ таблицы
+                        if (!showLeaderboard) {
+                            showLeaderboard = true;
+                            firebase.getTopScores(10, [&](const std::vector<LeaderboardEntry>& entries) {
+                                leaderboardLines.clear();
+                                float y = 250;
+                                int rank = 1;
+                                for (const auto& e : entries) {
+                                    sf::Text line(font);
+                                    line.setString(std::to_string(rank) + ". " + e.name + " - " + std::to_string(e.score));
+                                    line.setCharacterSize(28);
+                                    line.setFillColor(Color::Yellow);
+                                    line.setPosition({ 200, y });
+                                    leaderboardLines.push_back(line);
+                                    y += 35;
+                                    rank++;
+                                }
+                                });
+                        }
+                        else {
+                            showLeaderboard = false;
+                            leaderboardLines.clear();
+                        }
+                    }
+                    else if (exitText.getGlobalBounds().contains(mousePos)) {
+                        window.close();
+                    }
+                }
+            }
+
+            window.clear();
+            if (backgroundSprite.getTexture().getNativeHandle() != 0) {
+                window.draw(backgroundSprite);
+            }
+            window.draw(startText);
+            window.draw(leaderText);
+            window.draw(exitText);
+            if (showLeaderboard) {
+                for (auto& line : leaderboardLines) {
+                    window.draw(line);
+                }
+            }
+            window.display();
+            continue;
+        }
         
         if (waitingForName) {
             while (const std::optional event = window.pollEvent())
@@ -245,7 +335,8 @@ int main()
                     else if (c == '\r' && !inputName.empty()) {
                         playerName = inputName;
                         nameManager.setName(playerName);
-                        waitingForName = false;
+                        waitingForName = false;   
+                        inMenu = true;
                     }
                     else if (isalnum(c) || c == ' ') {
                         if (inputName.length() < 20) inputName += c;
@@ -261,14 +352,12 @@ int main()
             window.display();
             continue;
         }
-
         bestText.setString("BEST: " + std::to_string(nameManager.getPersonalBest()));
 
-        while (const std::optional event = window.pollEvent())
+               while (const std::optional event = window.pollEvent())
         {
             if (event->is<Event::Closed>())
                 window.close();
-
             if (const auto* keyPressed = event->getIf<Event::KeyPressed>())
             {
                 if (keyPressed->code == Keyboard::Key::P)
@@ -281,7 +370,6 @@ int main()
                 }
             }
         }
-
         static Dialog bossDialog;
         static bool dialogShown = false;
         static bool waitingForChoice = false;
