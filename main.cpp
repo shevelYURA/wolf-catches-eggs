@@ -17,7 +17,7 @@
 #include "PlayerNameManager.h"
 #include "screenConfig.h"
 #include "PowerUpManager.h"
-
+#include "MainMenu.h"
 using namespace sf;
 
 void restartGame(Player& player, Scorer& scoreCounter, Boss& boss,
@@ -144,6 +144,7 @@ int main()
 
     Clock clock;
     Font& font = ResourceManager::getFont(0);
+    MainMenu mainMenu(font);
 
     Text enterNameText(font);
     enterNameText.setString("ENTER YOUR NAME: " + inputName + "_");
@@ -246,6 +247,7 @@ int main()
                         playerName = inputName;
                         nameManager.setName(playerName);
                         waitingForName = false;
+                        mainMenu.show();   
                     }
                     else if (isalnum(c) || c == ' ') {
                         if (inputName.length() < 20) inputName += c;
@@ -261,13 +263,14 @@ int main()
             window.display();
             continue;
         }
-
         bestText.setString("BEST: " + std::to_string(nameManager.getPersonalBest()));
 
-        while (const std::optional event = window.pollEvent())
+               while (const std::optional event = window.pollEvent())
         {
             if (event->is<Event::Closed>())
                 window.close();
+
+            mainMenu.handleEvent(*event, window);
 
             if (const auto* keyPressed = event->getIf<Event::KeyPressed>())
             {
@@ -281,7 +284,6 @@ int main()
                 }
             }
         }
-
         static Dialog bossDialog;
         static bool dialogShown = false;
         static bool waitingForChoice = false;
@@ -558,6 +560,7 @@ int main()
         }
 
         bossDialog.draw(window);
+        mainMenu.draw(window);
         window.display();
     }
 
