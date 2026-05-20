@@ -127,7 +127,7 @@ int main()
     boostText.setFillColor(Color(255, 215, 0));
     boostText.setOutlineColor(Color::Black);
     boostText.setOutlineThickness(1);
-    boostText.setPosition(ScreenConfig::pos(250, 55));
+    boostText.setPosition(ScreenConfig::pos(300, 20));
 
     Text eggRainText(font);
     eggRainText.setCharacterSize(ScreenConfig::fontSize(36));
