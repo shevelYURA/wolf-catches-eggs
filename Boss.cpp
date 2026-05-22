@@ -67,7 +67,7 @@ void Boss::updateEyes(const Vector2f& playerPosition)
     float length = std::sqrt(toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y);
 
     float leftEyeX = bossPos.x - 15 * ScreenConfig::scaleX;
-    float rightEyeX = bossPos.x + 11 * ScreenConfig::scaleX;  // ← +11 для правого
+    float rightEyeX = bossPos.x + 11 * ScreenConfig::scaleX;
     float eyesY = bossPos.y - 25 * ScreenConfig::scaleY;
 
     if (length > 0) {
