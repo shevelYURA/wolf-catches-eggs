@@ -117,9 +117,6 @@
     <Image Include="bitmap1.bmp">
       <Filter>Файлы ресурсов</Filter>
     </Image>
-    <Image Include="image\basketTexture.png">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
     <Image Include="image\bossTexture.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
