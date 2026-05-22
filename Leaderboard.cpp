@@ -2,38 +2,39 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
+#include "screenConfig.h"
 
 Leaderboard::Leaderboard(sf::Font& f) : font(&f), visible(false) {
-    background.setSize(sf::Vector2f(600, 500));
+    background.setSize(ScreenConfig::size(600, 500));
     background.setFillColor(sf::Color(0, 0, 0, 220));
     background.setOutlineColor(sf::Color::White);
     background.setOutlineThickness(2);
-    background.setPosition(sf::Vector2f(660, 200));
-
+    background.setPosition(ScreenConfig::pos(660, 200));
+        
     titleText = new sf::Text(*font);
     titleText->setString("=== TOP SCORES ===");
-    titleText->setCharacterSize(36);
+    titleText->setCharacterSize(ScreenConfig::fontSize(36));
     titleText->setFillColor(sf::Color::Yellow);
     titleText->setOutlineColor(sf::Color::Black);
     titleText->setOutlineThickness(1);
-    titleText->setPosition(sf::Vector2f(960, 230));
+    titleText->setPosition(ScreenConfig::pos(960, 230));
     titleText->setOrigin(sf::Vector2f(titleText->getLocalBounds().size.x / 2, titleText->getLocalBounds().size.y / 2));
 
     for (int i = 0; i < 10; i++) {
         rankTexts[i] = new sf::Text(*font);
-        rankTexts[i]->setCharacterSize(24);
+        rankTexts[i]->setCharacterSize(ScreenConfig::fontSize(24));
         rankTexts[i]->setFillColor(sf::Color::White);
-        rankTexts[i]->setPosition(sf::Vector2f(700, 280 + i * 40));
+        rankTexts[i]->setPosition(ScreenConfig::pos(700.0f, 280.0f + i * 40.0f));
 
         nameTexts[i] = new sf::Text(*font);
-        nameTexts[i]->setCharacterSize(24);
+        nameTexts[i]->setCharacterSize(ScreenConfig::fontSize(24));
         nameTexts[i]->setFillColor(sf::Color::White);
-        nameTexts[i]->setPosition(sf::Vector2f(760, 280 + i * 40));
+        nameTexts[i]->setPosition(ScreenConfig::pos(760.0f, 280.0f + i * 40.0f));
 
         scoreTexts[i] = new sf::Text(*font);
-        scoreTexts[i]->setCharacterSize(24);
+        scoreTexts[i]->setCharacterSize(ScreenConfig::fontSize(24));
         scoreTexts[i]->setFillColor(sf::Color::Yellow);
-        scoreTexts[i]->setPosition(sf::Vector2f(1050, 280 + i * 40));
+        scoreTexts[i]->setPosition(ScreenConfig::pos(1050.0f, 280.0f + i * 40.0f));
     }
 }
 
