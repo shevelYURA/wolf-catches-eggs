@@ -60,8 +60,6 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 IDB_PNG1                PNG                     "image\\wolfTexture.png"
 
-IDB_PNG2                PNG                     "image\\basketTexture.png"
-
 IDB_PNG5                PNG                     "image\\egg.png"
 
 IDB_PNG6                PNG                     "image\\icon.png"
