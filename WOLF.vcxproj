@@ -147,6 +147,7 @@
     <ClCompile Include="FallingObject.cpp" />
     <ClCompile Include="FirebaseManager.cpp" />
     <ClCompile Include="HealthBar.cpp" />
+    <ClCompile Include="Leaderboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerNameManager.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="Eggs.h" />
     <ClInclude Include="FallingObject.h" />
     <ClInclude Include="FirebaseManager.h" />
+    <ClInclude Include="Leaderboard.h" />
     <ClInclude Include="screenConfig.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="Player.h" />

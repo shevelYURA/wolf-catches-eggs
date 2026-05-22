@@ -11,14 +11,44 @@
 #include <cstdlib>
 #include <vector>
 #include <memory>
+#include <fstream>
+#include <algorithm>
 #include "ResourceManager.h"
 #include "dialog.h"
 #include "FirebaseManager.h"
 #include "PlayerNameManager.h"
 #include "screenConfig.h"
 #include "PowerUpManager.h"
+#include "Leaderboard.h"
 
 using namespace sf;
+
+void addScoreToLeaderboard(const std::string& name, int score) {
+    std::vector<std::pair<std::string, int>> scores;
+    std::ifstream file("leaderboard.txt");
+    if (file.is_open()) {
+        std::string n;
+        int s;
+        while (file >> n >> s) {
+            if (n != name) {
+                scores.push_back({ n, s });
+            }
+        }
+        file.close();
+    }
+
+    scores.push_back({ name, score });
+
+    std::sort(scores.begin(), scores.end(), [](const auto& a, const auto& b) {
+        return a.second > b.second;
+        });
+
+    std::ofstream out("leaderboard.txt");
+    for (const auto& item : scores) {
+        out << item.first << " " << item.second << std::endl;
+    }
+    out.close();
+}
 
 int main()
 {
@@ -35,8 +65,7 @@ int main()
     int windowPosX = (desktopMode.size.x - screenWidth) / 2;
     int windowPosY = (desktopMode.size.y - screenHeight) / 2;
     window.setPosition(Vector2i(windowPosX, windowPosY));
-    
-    // ========== ЗАГРУЗКА ФОНА ==========
+
     Texture& backgroundTexture = ResourceManager::getTexture(IDB_BACKGROUND);
     Sprite backgroundSprite(backgroundTexture);
 
@@ -46,8 +75,7 @@ int main()
         (float)windowSize.x / textureSize.x,
         (float)windowSize.y / textureSize.y
     ));
-    // ===================================
-    
+
     HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDB_PNG6), L"PNG");
     if (hRes) {
         HGLOBAL hData = LoadResource(NULL, hRes);
@@ -79,7 +107,7 @@ int main()
     std::vector<std::unique_ptr<FallingObject>> fallingObjects;
     const int count_eggs = 7;
     int extraEggsCount = 0;
-    
+
     for (int i = 0; i < count_eggs; ++i) {
         auto egg = std::make_unique<Egg>();
         if (rand() % 100 < 20) {
@@ -105,6 +133,9 @@ int main()
 
     Clock clock;
     Font& font = ResourceManager::getFont(0);
+
+    Leaderboard leaderboard(font);
+    leaderboard.updateFromFile();
 
     Text enterNameText(font);
     enterNameText.setString("ENTER YOUR NAME: " + inputName + "_");
@@ -148,7 +179,6 @@ int main()
     gameOverText.setOrigin(Vector2f(gameOverBounds.size.x / 2, gameOverBounds.size.y / 2));
     gameOverText.setPosition(ScreenConfig::pos(960, 540));
 
-    // ТЕКСТ ДЛЯ БУСТА "БОКСЁРСКАЯ ПЕРЧАТКА"
     Text boxingGloveText(font);
     boxingGloveText.setCharacterSize(ScreenConfig::fontSize(36));
     boxingGloveText.setFillColor(Color(255, 80, 80));
@@ -157,7 +187,6 @@ int main()
     boxingGloveText.setPosition(ScreenConfig::pos(960, 200));
     boxingGloveText.setOrigin(Vector2f(boxingGloveText.getLocalBounds().size.x / 2, boxingGloveText.getLocalBounds().size.y / 2));
 
-    // ТЕКСТ ДЛЯ БУСТА "БУРГЕР"
     Text burgerText(font);
     burgerText.setCharacterSize(ScreenConfig::fontSize(24));
     burgerText.setFillColor(Color(255, 200, 100));
@@ -165,7 +194,6 @@ int main()
     burgerText.setOutlineThickness(1);
     burgerText.setPosition(ScreenConfig::pos(250, 85));
 
-    // ТЕКСТ ДЛЯ БУСТА "ЗЕЛЬЕ"
     Text potionText(font);
     potionText.setCharacterSize(ScreenConfig::fontSize(24));
     potionText.setFillColor(Color(200, 100, 255));
@@ -177,7 +205,7 @@ int main()
     {
         float time = clock.getElapsedTime().asMicroseconds() / 600000.0f;
         clock.restart();
-        
+
         if (waitingForName) {
             while (const std::optional event = window.pollEvent())
             {
@@ -229,6 +257,20 @@ int main()
             }
         }
 
+        static bool tabWasPressed = false;
+        if (Keyboard::isKeyPressed(Keyboard::Key::Tab)) {
+            if (!tabWasPressed) {
+                leaderboard.toggle();
+                if (leaderboard.isVisible()) {
+                    leaderboard.updateFromFile();
+                }
+            }
+            tabWasPressed = true;
+        }
+        else {
+            tabWasPressed = false;
+        }
+
         static Dialog bossDialog;
         static bool dialogShown = false;
         static bool waitingForChoice = false;
@@ -278,50 +320,45 @@ int main()
             player.update(time, window);
         }
 
-        // ОБНОВЛЕНИЕ БУСТОВ С ПЕРЕДАЧЕЙ СОСТОЯНИЯ БОССА
         powerUpManager.update(time, boss.isActive());
 
-        // ПРОВЕРКА СТОЛКНОВЕНИЙ С БУСТАМИ
         for (auto& powerUp : powerUpManager.getPowerUps()) {
             if (powerUp->collision(player.getBasketBounds())) {
                 if (powerUp->getType() == PowerUpType::EggRain) {
                     if (!eggRainActive) {
                         eggRainActive = true;
                         eggRainTimer = EGG_RAIN_DURATION;
-                        
+
                         while (fallingObjects.size() > static_cast<size_t>(count_eggs)) {
                             fallingObjects.pop_back();
                         }
-                        
+
                         int newEggsCount = 80;
                         extraEggsCount = newEggsCount;
-                        
+
                         for (int i = 0; i < newEggsCount; i++) {
                             auto newEgg = std::make_unique<Egg>();
-                            
+
                             if (rand() % 100 < 20) {
                                 newEgg->setGolden(true);
                             }
-                            
+
                             float x = ScreenConfig::scaleX * (100 + (rand() % 1720));
                             float y = ScreenConfig::scaleY * (-50 - (i * 15));
-                            
+
                             newEgg->forceRainFall(x, y);
                             newEgg->enableRainMode();
-                            
+
                             fallingObjects.push_back(std::move(newEgg));
                         }
                     }
                 }
-                // БУСТ: БОКСЁРСКАЯ ПЕРЧАТКА
                 else if (powerUp->getType() == PowerUpType::BoxingGlove) {
                     player.activateBoxingGlove();
                 }
-                // БУСТ: БУРГЕР (восстанавливает 25 HP)
                 else if (powerUp->getType() == PowerUpType::Burger) {
                     player.heal(25);
                 }
-                // БУСТ: ЗЕЛЬЕ (восстанавливает 40 HP)
                 else if (powerUp->getType() == PowerUpType::Potion) {
                     player.heal(40);
                 }
@@ -330,7 +367,6 @@ int main()
             }
         }
 
-        // ДВИЖЕНИЕ И СБОР ЯИЦ
         for (auto& obj : fallingObjects) {
             obj->move(time);
             if (obj->collision(player.getBasketBounds())) {
@@ -345,16 +381,15 @@ int main()
             }
         }
 
-        // ТАЙМЕР ЯЙЦЕПАДА
         if (eggRainActive) {
             eggRainTimer -= time;
             if (eggRainTimer <= 0.0f) {
                 eggRainActive = false;
-                
+
                 while (fallingObjects.size() > static_cast<size_t>(count_eggs)) {
                     fallingObjects.pop_back();
                 }
-                
+
                 for (auto& obj : fallingObjects) {
                     if (auto* egg = dynamic_cast<Egg*>(obj.get())) {
                         egg->disableRainMode();
@@ -377,7 +412,6 @@ int main()
 
             if (player.getAttack().isInFlight()) {
                 if (player.getAttack().getPosition().findIntersection(boss.getBounds()).has_value()) {
-                    // УРОН С УЧЁТОМ МНОЖИТЕЛЯ ОТ ПЕРЧАТКИ
                     int damage = 10 * player.getDamageMultiplier();
                     boss.takeDamage(damage);
                     player.getAttack().stop();
@@ -432,7 +466,6 @@ int main()
 
         healthBar.update(player.getHealth());
 
-        // ОТРИСОВКА
         window.clear();
         if (backgroundSprite.getTexture().getNativeHandle() != 0) {
             window.draw(backgroundSprite);
@@ -447,35 +480,36 @@ int main()
         window.draw(boostText);
         window.draw(burgerText);
         window.draw(potionText);
-        
+
         powerUpManager.draw(window);
 
         if (eggRainActive) {
             if (eggRainTimer < 2.0f && static_cast<int>(eggRainTimer * 10) % 2 == 0) {
                 eggRainText.setFillColor(Color::Red);
-            } else {
+            }
+            else {
                 eggRainText.setFillColor(Color(255, 100, 255));
             }
-            
+
             std::string rainText = "EGG RAIN! " + std::to_string(static_cast<int>(eggRainTimer)) + "s";
             eggRainText.setString(rainText);
             eggRainText.setOrigin(Vector2f(eggRainText.getLocalBounds().size.x / 2, eggRainText.getLocalBounds().size.y / 2));
-            
+
             window.draw(eggRainText);
         }
 
-        // ОТРИСОВКА ТЕКСТА БОКСЁРСКОЙ ПЕРЧАТКИ
         if (player.hasBoxingGlove()) {
             float remaining = player.getBoxingGloveTimer();
             std::string gloveText = "🥊 BOXING GLOVE! x4 DAMAGE 🥊 " + std::to_string(static_cast<int>(remaining)) + "s";
             boxingGloveText.setString(gloveText);
-            
+
             if (remaining < 3.0f && static_cast<int>(remaining * 10) % 2 == 0) {
                 boxingGloveText.setFillColor(Color::Red);
-            } else {
+            }
+            else {
                 boxingGloveText.setFillColor(Color(255, 100, 100));
             }
-            
+
             boxingGloveText.setOrigin(Vector2f(boxingGloveText.getLocalBounds().size.x / 2, boxingGloveText.getLocalBounds().size.y / 2));
             window.draw(boxingGloveText);
         }
@@ -485,10 +519,17 @@ int main()
             bossHealthBar.draw(window);
         }
 
+        leaderboard.draw(window);
+
         if (!player.isAlive()) {
             if (!scoreSaved) {
-                firebase.saveScore(playerName, scoreCounter.getScore());
-                nameManager.updatePersonalBest(scoreCounter.getScore());
+                int currentBest = firebase.getCurrentBest(playerName);
+                if (scoreCounter.getScore() > currentBest) {
+                    firebase.saveScore(playerName, scoreCounter.getScore());
+                    addScoreToLeaderboard(playerName, scoreCounter.getScore());
+                    nameManager.updatePersonalBest(scoreCounter.getScore());
+                    leaderboard.updateFromFile();
+                }
                 scoreSaved = true;
             }
 
