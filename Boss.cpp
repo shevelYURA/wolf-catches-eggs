@@ -66,23 +66,30 @@ void Boss::updateEyes(const Vector2f& playerPosition)
     Vector2f toPlayer = playerPosition - bossPos;
     float length = std::sqrt(toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y);
 
+    float leftEyeX = bossPos.x - 15 * ScreenConfig::scaleX;
+    float rightEyeX = bossPos.x + 11 * ScreenConfig::scaleX;  // ← +11 для правого
+    float eyesY = bossPos.y - 25 * ScreenConfig::scaleY;
+
     if (length > 0) {
         toPlayer /= length;
 
-        // Зрачки смотрят на игрока
+        // Зрачки
         float eyeOffsetX = toPlayer.x * (8 * ScreenConfig::scaleX);
         float eyeOffsetY = toPlayer.y * (8 * ScreenConfig::scaleY);
 
-        pupilLeft.setPosition(Vector2f(bossPos.x - 15 * ScreenConfig::scaleX + eyeOffsetX,
-            bossPos.y - 25 * ScreenConfig::scaleY + eyeOffsetY));
-        pupilRight.setPosition(Vector2f(bossPos.x + 15 * ScreenConfig::scaleX + eyeOffsetX,
-            bossPos.y - 25 * ScreenConfig::scaleY + eyeOffsetY));
+        pupilLeft.setPosition(Vector2f(
+            leftEyeX + eyeOffsetX,
+            eyesY + eyeOffsetY
+        ));
+
+        pupilRight.setPosition(Vector2f(
+            rightEyeX + eyeOffsetX,
+            eyesY + eyeOffsetY
+        ));
 
         // Белки глаз
-        eyeLeft.setPosition(Vector2f(bossPos.x - 15 * ScreenConfig::scaleX,
-            bossPos.y - 25 * ScreenConfig::scaleY));
-        eyeRight.setPosition(Vector2f(bossPos.x + 15 * ScreenConfig::scaleX,
-            bossPos.y - 25 * ScreenConfig::scaleY));
+        eyeLeft.setPosition(Vector2f(leftEyeX, eyesY));
+        eyeRight.setPosition(Vector2f(rightEyeX, eyesY));
     }
     else {
         // Если игрок на той же позиции, просто центрируем зрачки
@@ -157,7 +164,7 @@ void Boss::updateColor()
     float healthPercent = static_cast<float>(health) / 1000.0f;
 
     if (healthPercent > 0.6f) {
-        body.setFillColor(Color(150, 50, 150));
+        body.setFillColor(Color(255, 255, 255));
     }
     else if (healthPercent > 0.3f) {
         body.setFillColor(Color(200, 100, 50));
